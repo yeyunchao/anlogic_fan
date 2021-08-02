@@ -1,0 +1,110 @@
+set_pin_assignment	{ CPLD_ALLMUTE_EC }	{ LOCATION = P28; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_ATX_PWRGD }	{ LOCATION = P89; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_BUZZER }	{ LOCATION = P82; IOSTANDARD = LVCMOS33; DRIVESTRENGTH = 16; SLEWRATE = FAST; }
+set_pin_assignment	{ CPLD_CASE_OPEN }	{ LOCATION = P78; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_CLKGEN_CLK }	{ LOCATION = P35; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_CLKGEN_DAT }	{ LOCATION = P36; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_CLK_25M }	{ LOCATION = P62; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FAN_PWM0 }	{ LOCATION = P54; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FAN_PWM1 }	{ LOCATION = P52; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FAN_PWM2 }	{ LOCATION = P61; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FAN_TACH0 }	{ LOCATION = P57; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FAN_TACH1 }	{ LOCATION = P53; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FAN_TACH2 }	{ LOCATION = P51; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FT_POR_N }	{ LOCATION = P16; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_FUSB_PWREN0 }	{ LOCATION = P66; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_FUSB_PWREN1 }	{ LOCATION = P27; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_F_PANEL_PWRBTN }	{ LOCATION = P29; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_GPIO_CASE0 }	{ LOCATION = P30; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_GPIO_CASE1 }	{ LOCATION = P31; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_HD_LED }	{ LOCATION = P83; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_HW_RSTN }	{ LOCATION = P85; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_I2C1_SCL }	{ LOCATION = P14; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_I2C1_SDA }	{ LOCATION = P15; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_INT5_GPIO }	{ LOCATION = P87; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_INT6_GPIO }	{ LOCATION = P86; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_LAN_PWR }	{ LOCATION = P68; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_LPC_CLK_R }	{ LOCATION = P1; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_IRQ }	{ LOCATION = P3; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_LAD[0] }	{ LOCATION = P7; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_LAD[1] }	{ LOCATION = P8; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_LAD[2] }	{ LOCATION = P9; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_LAD[3] }	{ LOCATION = P10; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_LFRAME }	{ LOCATION = P2; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_LPC_RST }	{ LOCATION = P4; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_MEM_RESET_S3 }	{ LOCATION = P64; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_MUT_MONO_EC }	{ LOCATION = P25; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_P1V8_EN }	{ LOCATION = P45; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_PCIERST_SLOT }	{ LOCATION = P63; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_PCIE_LAN_RST_N }	{ LOCATION = P67; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_PWR_S0_EN }	{ LOCATION = P41; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_PWR_S3_EN }	{ LOCATION = P40; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_PWR_S4_S5_EN }	{ LOCATION = P39; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_RUSB_PWREN0 }	{ LOCATION = P65; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_RUSB_PWREN1 }	{ LOCATION = P99; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SAFECARD_RSTN }	{ LOCATION = P97; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SCL_TEMP }	{ LOCATION = P32; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SDA_TEMP }	{ LOCATION = P34; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SLOT_I2C_CLK }	{ LOCATION = P38; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SLOT_I2C_SDA }	{ LOCATION = P37; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SPKMUTE_EC }	{ LOCATION = P21; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ CPLD_SYS_LED0 }	{ LOCATION = P74; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SYS_LED1 }	{ LOCATION = P75; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_SYS_WAKE_N }	{ LOCATION = P60; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_TCM_H_DISABLE }	{ LOCATION = P69; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_TCM_H_GPIO }	{ LOCATION = P71; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_TCM_H_PRESENT }	{ LOCATION = P70; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_TCM_ISORSTN }	{ LOCATION = P88; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_TCM_PORN }	{ LOCATION = P96; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_VDDQ_VPP_EN }	{ LOCATION = P43; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_VDDQ_VPP_PG }	{ LOCATION = P49; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_VDD_CORE_EN }	{ LOCATION = P42; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_VDD_CORE_P0V8_PG }	{ LOCATION = P48; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_VTT_EN }	{ LOCATION = P47; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ CPLD_VTT_PG }	{ LOCATION = P98; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ FT_GPIO0_A1 }	{ LOCATION = P18; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ FT_GPIO1_B3_CPLD }	{ LOCATION = P19; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ FT_PWR_CTR0_CPLD }	{ LOCATION = P13; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ FT_PWR_CTR1_CPLD }	{ LOCATION = P17; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ HD_LED_FP }	{ LOCATION = P84; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ SCI_CPLD }	{ LOCATION = P12; IOSTANDARD = LVCMOS18; }
+set_pin_assignment	{ SYS_S3N_CPLD }	{ LOCATION = P58; IOSTANDARD = LVCMOS33; }
+set_pin_assignment	{ SYS_S5N_CPLD }	{ LOCATION = P59; IOSTANDARD = LVCMOS33; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

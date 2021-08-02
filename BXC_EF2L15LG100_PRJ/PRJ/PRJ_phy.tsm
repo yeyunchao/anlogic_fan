@@ -1,0 +1,13 @@
+ef2_1
+13 0 0 0 0 0 0
+infinity infinity TOP ef2_1 EF2L15LG100B Detail 7 0
+
+Timing group statistics: 
+	Clock constraints: 
+	  No constraint path
+	Minimum input arrival time before clock: no constraint path
+	Maximum output required time after clock: no constraint path
+	Maximum combinational path delay: no constraint path
+Warning: No clock constraint on 1 clock net(s): 
+	clk0
+

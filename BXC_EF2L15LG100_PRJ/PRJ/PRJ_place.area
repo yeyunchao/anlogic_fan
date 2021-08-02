@@ -1,0 +1,110 @@
+standard
+***Report Model: TOP***
+
+IO Statistics
+#IO                        72
+  #input                   18
+  #output                  40
+  #inout                   14
+
+Utilization Statistics
+#lut                      328   out of   1520   21.58%
+#reg                      150   out of   1520    9.87%
+#le                       336
+  #lut only               186   out of    336   55.36%
+  #reg only                 8   out of    336    2.38%
+  #lut&reg                142   out of    336   42.26%
+#dsp                        0   out of      8    0.00%
+#bram                       0   out of      6    0.00%
+  #bram9k                   0
+  #fifo9k                   0
+#bram32k                    0   out of      3    0.00%
+#pad                       72   out of     76   94.74%
+  #ireg                     0
+  #oreg                     4
+  #treg                     0
+#pll                        1   out of      1  100.00%
+
+
+Detailed IO Report
+
+          Name             Direction    Location    IOStandard    DriveStrength    PullType    PackReg  
+     CPLD_ATX_PWRGD          INPUT        P89        LVCMOS33          N/A          PULLUP      NONE    
+     CPLD_CASE_OPEN          INPUT        P78        LVCMOS33          N/A          PULLUP      NONE    
+      CPLD_CLK_25M           INPUT        P62        LVCMOS33          N/A          PULLUP      NONE    
+   CPLD_F_PANEL_PWRBTN       INPUT        P29        LVCMOS33          N/A          PULLUP      NONE    
+      CPLD_HW_RSTN           INPUT        P85        LVCMOS33          N/A          PULLUP      NONE    
+     CPLD_INT5_GPIO          INPUT        P87        LVCMOS33          N/A          PULLUP      NONE    
+     CPLD_INT6_GPIO          INPUT        P86        LVCMOS33          N/A          PULLUP      NONE    
+     CPLD_LPC_CLK_R          INPUT         P1        LVCMOS18          N/A          PULLUP      NONE    
+     CPLD_LPC_LFRAME         INPUT         P2        LVCMOS18          N/A          PULLUP      NONE    
+      CPLD_LPC_RST           INPUT         P4        LVCMOS18          N/A          PULLUP      NONE    
+     CPLD_PWR_S0_EN          INPUT        P41        LVCMOS33          N/A          PULLUP      NONE    
+     CPLD_SYS_WAKE_N         INPUT        P60        LVCMOS33          N/A          PULLUP      NONE    
+    CPLD_VDDQ_VPP_PG         INPUT        P49        LVCMOS33          N/A          PULLUP      NONE    
+  CPLD_VDD_CORE_P0V8_PG      INPUT        P48        LVCMOS33          N/A          PULLUP      NONE    
+       CPLD_VTT_PG           INPUT        P98        LVCMOS33          N/A          PULLUP      NONE    
+    FT_GPIO1_B3_CPLD         INPUT        P19        LVCMOS18          N/A          PULLUP      NONE    
+    FT_PWR_CTR0_CPLD         INPUT        P13        LVCMOS18          N/A          PULLUP      NONE    
+    FT_PWR_CTR1_CPLD         INPUT        P17        LVCMOS18          N/A          PULLUP      NONE    
+     CPLD_ALLMUTE_EC        OUTPUT        P28        LVCMOS33           8            NONE       NONE    
+       CPLD_BUZZER          OUTPUT        P82        LVCMOS33          16            NONE       NONE    
+      CPLD_FAN_PWM0         OUTPUT        P54        LVCMOS33          20            NONE       NONE    
+      CPLD_FAN_PWM1         OUTPUT        P52        LVCMOS33          20            NONE       NONE    
+      CPLD_FAN_PWM2         OUTPUT        P61        LVCMOS33          20            NONE       NONE    
+     CPLD_FAN_TACH0         OUTPUT        P57        LVCMOS33          20            NONE       NONE    
+     CPLD_FAN_TACH1         OUTPUT        P53        LVCMOS33          20            NONE       NONE    
+     CPLD_FAN_TACH2         OUTPUT        P51        LVCMOS33          20            NONE       NONE    
+      CPLD_FT_POR_N         OUTPUT        P16        LVCMOS18          12            NONE       NONE    
+    CPLD_FUSB_PWREN0        OUTPUT        P66        LVCMOS33          20            NONE       NONE    
+    CPLD_FUSB_PWREN1        OUTPUT        P27        LVCMOS33           8            NONE       NONE    
+     CPLD_GPIO_CASE0        OUTPUT        P30        LVCMOS33           8            NONE       NONE    
+     CPLD_GPIO_CASE1        OUTPUT        P31        LVCMOS33           8            NONE       NONE    
+       CPLD_HD_LED          OUTPUT        P83        LVCMOS33           8            NONE       NONE    
+      CPLD_LAN_PWR          OUTPUT        P68        LVCMOS33          20            NONE       NONE    
+    CPLD_MEM_RESET_S3       OUTPUT        P64        LVCMOS33          20            NONE       OREG    
+    CPLD_MUT_MONO_EC        OUTPUT        P25        LVCMOS18          12            NONE       NONE    
+      CPLD_P1V8_EN          OUTPUT        P45        LVCMOS33           8            NONE       OREG    
+    CPLD_PCIERST_SLOT       OUTPUT        P63        LVCMOS33          20            NONE       NONE    
+   CPLD_PCIE_LAN_RST_N      OUTPUT        P67        LVCMOS33          20            NONE       NONE    
+     CPLD_PWR_S3_EN         OUTPUT        P40        LVCMOS33           8            NONE       NONE    
+    CPLD_PWR_S4_S5_EN       OUTPUT        P39        LVCMOS33           8            NONE       NONE    
+    CPLD_RUSB_PWREN0        OUTPUT        P65        LVCMOS33          20            NONE       NONE    
+    CPLD_RUSB_PWREN1        OUTPUT        P99        LVCMOS33           8            NONE       NONE    
+   CPLD_SAFECARD_RSTN       OUTPUT        P97        LVCMOS33           8            NONE       NONE    
+     CPLD_SPKMUTE_EC        OUTPUT        P21        LVCMOS18          12            NONE       NONE    
+      CPLD_SYS_LED0         OUTPUT        P74        LVCMOS33          20            NONE       NONE    
+      CPLD_SYS_LED1         OUTPUT        P75        LVCMOS33          20            NONE       NONE    
+   CPLD_TCM_H_DISABLE       OUTPUT        P69        LVCMOS33          20            NONE       NONE    
+     CPLD_TCM_H_GPIO        OUTPUT        P71        LVCMOS33          20            NONE       NONE    
+   CPLD_TCM_H_PRESENT       OUTPUT        P70        LVCMOS33          20            NONE       NONE    
+    CPLD_TCM_ISORSTN        OUTPUT        P88        LVCMOS33           8            NONE       NONE    
+      CPLD_TCM_PORN         OUTPUT        P96        LVCMOS33           8            NONE       NONE    
+    CPLD_VDDQ_VPP_EN        OUTPUT        P43        LVCMOS33           8            NONE       NONE    
+    CPLD_VDD_CORE_EN        OUTPUT        P42        LVCMOS33           8            NONE       OREG    
+       CPLD_VTT_EN          OUTPUT        P47        LVCMOS33           8            NONE       OREG    
+       FT_GPIO0_A1          OUTPUT        P18        LVCMOS18          12            NONE       NONE    
+        HD_LED_FP           OUTPUT        P84        LVCMOS33           8            NONE       NONE    
+      SYS_S3N_CPLD          OUTPUT        P58        LVCMOS33          20            NONE       NONE    
+      SYS_S5N_CPLD          OUTPUT        P59        LVCMOS33          20            NONE       NONE    
+     CPLD_CLKGEN_CLK         INOUT        P35        LVCMOS33           8           PULLUP      NONE    
+     CPLD_CLKGEN_DAT         INOUT        P36        LVCMOS33           8           PULLUP      NONE    
+      CPLD_I2C1_SCL          INOUT        P14        LVCMOS18          12           PULLUP      NONE    
+      CPLD_I2C1_SDA          INOUT        P15        LVCMOS18          12           PULLUP      NONE    
+      CPLD_LPC_IRQ           INOUT         P3        LVCMOS18          12           PULLUP      NONE    
+     CPLD_LPC_LAD[3]         INOUT        P10        LVCMOS18          12           PULLUP      NONE    
+     CPLD_LPC_LAD[2]         INOUT         P9        LVCMOS18          12           PULLUP      NONE    
+     CPLD_LPC_LAD[1]         INOUT         P8        LVCMOS18          12           PULLUP      NONE    
+     CPLD_LPC_LAD[0]         INOUT         P7        LVCMOS18          12           PULLUP      NONE    
+      CPLD_SCL_TEMP          INOUT        P32        LVCMOS33           8           PULLUP      NONE    
+      CPLD_SDA_TEMP          INOUT        P34        LVCMOS33           8           PULLUP      NONE    
+    CPLD_SLOT_I2C_CLK        INOUT        P38        LVCMOS33           8           PULLUP      NONE    
+    CPLD_SLOT_I2C_SDA        INOUT        P37        LVCMOS33           8           PULLUP      NONE    
+        SCI_CPLD             INOUT        P12        LVCMOS18          12           PULLUP      NONE    
+
+Report Hierarchy Area:
++----------------------------------------------------------------+
+|Instance |Module |le    |lut    |ripple |seq    |bram   |dsp    |
++----------------------------------------------------------------+
+|top      |TOP    |336   |256    |72     |154    |0      |0      |
++----------------------------------------------------------------+
