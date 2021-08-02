@@ -327,21 +327,21 @@ end
 
 //---------------------------------------------------------------
 /*
-风扇DUTY控制
+风扇DUTY控制 35kHz
 */
-parameter [7:0] FAN_DUTY = 150;
-
+parameter [7:0] DEBUG_FAN_DUTY = 100;
+reg [7:0] Fan_duty = DEBUG_FAN_DUTY;
 reg [7:0] CPLD_FAN_HIGH_DLYXms;
 always @(posedge clk0 or negedge rstn) begin 
 	if(~rstn) begin 
 		CPLD_FAN_HIGH_DLYXms <= 0;	
 		CPLD_FAN_PWM0 <= 1'b0;				
 		end
-	else if(CPLD_FAN_HIGH_DLYXms >= FAN_DUTY && CPLD_FAN_HIGH_DLYXms < 222) begin		
+	else if(CPLD_FAN_HIGH_DLYXms >= Fan_duty && CPLD_FAN_HIGH_DLYXms < 222) begin		
 		CPLD_FAN_PWM0 <= 1'b0;		
 		CPLD_FAN_HIGH_DLYXms <= CPLD_FAN_HIGH_DLYXms + 1;	
 		end				
-	else if(CPLD_FAN_HIGH_DLYXms < FAN_DUTY) begin		
+	else if(CPLD_FAN_HIGH_DLYXms < Fan_duty) begin		
 		CPLD_FAN_PWM0 <= 1'b1;		
 		CPLD_FAN_HIGH_DLYXms <= CPLD_FAN_HIGH_DLYXms + 1;	
 		end		
@@ -350,6 +350,25 @@ always @(posedge clk0 or negedge rstn) begin
 		CPLD_FAN_HIGH_DLYXms <= 1;	
 		end
 end	
+
+////---------------------------------------------------------------
+///*
+//风扇pwm test
+//*/
+//reg [23:0] CPLD_FAN_HIGH_DLY2000ms;
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) begin 
+//		CPLD_FAN_HIGH_DLY2000ms <= 0;			
+//		end			
+//	else if(CPLD_FAN_HIGH_DLY2000ms == 15625000-1) begin		
+//		Fan_duty <= Fan_duty + 1;	
+//		CPLD_FAN_HIGH_DLY2000ms <= 0;
+//		end		
+//	else begin		
+//		CPLD_FAN_HIGH_DLY2000ms <= CPLD_FAN_HIGH_DLY2000ms+1;
+//		end
+//end	
+
 
 
 
