@@ -72,7 +72,7 @@ wire    [7:0]   reg_addr2   = temp_config_data[15:8];
 wire    [7:0]   wr_data     = temp_config_data[7:0];
 //
 reg             wr_ack1;
-reg             wr_ack2;
+//reg             wr_ack2;
 reg             wr_ack3;
 reg             wr_ack4;
 reg             rd_ack1;
@@ -152,21 +152,21 @@ always @(*)begin
             next_state = I2C_WR_ACK1;
     I2C_WR_REGADDR1:
         if(transfer_en == 1'b1 && tran_cnt == SEND_BIT)
-            next_state = I2C_WR_ACK2;
-        else
-            next_state = I2C_WR_REGADDR1;
-    I2C_WR_ACK2:
-        if(transfer_en == 1'b1 && wr_ack2 == 1'b0)
-            next_state = I2C_WR_REGADDR2;
-        else if(transfer_en == 1'b1)
-            next_state = I2C_IDLE;
-        else
-            next_state = I2C_WR_ACK2;
-    I2C_WR_REGADDR2:
-        if(transfer_en == 1'b1 && tran_cnt == SEND_BIT)
             next_state = I2C_WR_ACK3;
         else
-            next_state = I2C_WR_REGADDR2;
+            next_state = I2C_WR_REGADDR1;
+//    I2C_WR_ACK2:
+//        if(transfer_en == 1'b1 && wr_ack2 == 1'b0)
+//            next_state = I2C_WR_REGADDR2;
+//        else if(transfer_en == 1'b1)
+//            next_state = I2C_IDLE;
+//        else
+//            next_state = I2C_WR_ACK2;
+//    I2C_WR_REGADDR2:
+//        if(transfer_en == 1'b1 && tran_cnt == SEND_BIT)
+//            next_state = I2C_WR_ACK3;
+//        else
+//            next_state = I2C_WR_REGADDR2;
     I2C_WR_ACK3:
         if(transfer_en == 1'b1 && wr_ack3 == 1'b0 && wr_rd_flag == 1'b0)
             next_state = I2C_WR_DATA;
@@ -239,7 +239,7 @@ always @(posedge clk or negedge rst_n)begin
         I2C_START:  if(capture_en == 1'b1)  i2c_sdat_r <= 1'b0;
         I2C_WR_IDADDR:  if(transfer_en == 1'b1) i2c_sdat_r <= wr_device_addr['d7 - tran_cnt];
         I2C_WR_REGADDR1:if(transfer_en == 1'b1) i2c_sdat_r <= reg_addr1['d7 - tran_cnt];
-        I2C_WR_REGADDR2:if(transfer_en == 1'b1) i2c_sdat_r <= reg_addr2['d7 - tran_cnt];
+        //I2C_WR_REGADDR2:if(transfer_en == 1'b1) i2c_sdat_r <= reg_addr2['d7 - tran_cnt];
         I2C_WR_DATA:    if(transfer_en == 1'b1) i2c_sdat_r <= wr_data['d7 - tran_cnt];
         I2C_WR_ACK4:    if(transfer_en == 1'b1) i2c_sdat_r <= 1'b0;
         I2C_WR_STOP:    if(capture_en == 1'b1) i2c_sdat_r <= 1'b1;
@@ -256,7 +256,7 @@ always @(posedge clk or negedge rst_n)begin
     if(rst_n == 1'b0)begin
         i2c_rd_data <= 8'b0;
         wr_ack1   <= 1'b1;
-        wr_ack2   <= 1'b1;
+        //wr_ack2   <= 1'b1;
         wr_ack3   <= 1'b1;
         wr_ack4   <= 1'b1;
         rd_ack1   <= 1'b1;
@@ -264,12 +264,12 @@ always @(posedge clk or negedge rst_n)begin
     else if(capture_en == 1'b1)begin
         case(next_state)
         I2C_WR_ACK1: wr_ack1 <= i2c_sdat;
-        I2C_WR_ACK2: wr_ack2 <= i2c_sdat;
+        //I2C_WR_ACK2: wr_ack2 <= i2c_sdat;
         I2C_WR_ACK3: wr_ack3 <= i2c_sdat;
         I2C_WR_ACK4: wr_ack4 <= i2c_sdat;
         I2C_WR_STOP: begin
             wr_ack1   <= 1'b1;
-            wr_ack2   <= 1'b1;
+            //wr_ack2   <= 1'b1;
             wr_ack3   <= 1'b1;
             wr_ack4   <= 1'b1;
             rd_ack1   <= 1'b1;
@@ -278,7 +278,7 @@ always @(posedge clk or negedge rst_n)begin
         I2C_RD_DATA: i2c_rd_data['d7 - tran_cnt] <= i2c_sdat;
         I2C_RD_STOP:begin
             wr_ack1   <= 1'b1;
-            wr_ack2   <= 1'b1;
+            //wr_ack2   <= 1'b1;
             wr_ack3   <= 1'b1;
             wr_ack4   <= 1'b1;
             rd_ack1   <= 1'b1;
@@ -286,7 +286,7 @@ always @(posedge clk or negedge rst_n)begin
         default:begin
             i2c_rd_data <= i2c_rd_data;
             wr_ack1 <= wr_ack1;
-            wr_ack2 <= wr_ack2;
+            //wr_ack2 <= wr_ack2;
             wr_ack3 <= wr_ack3;
             wr_ack4 <= wr_ack4;
             rd_ack1 <= rd_ack1;
@@ -296,7 +296,7 @@ always @(posedge clk or negedge rst_n)begin
     else begin
         i2c_rd_data <= i2c_rd_data;
         wr_ack1   <= wr_ack1;
-        wr_ack2   <= wr_ack2;
+        //wr_ack2   <= wr_ack2;
         wr_ack3   <= wr_ack3;
         wr_ack4   <= wr_ack4;
         rd_ack1   <= rd_ack1;
@@ -304,7 +304,7 @@ always @(posedge clk or negedge rst_n)begin
 end
 
 //-------------------------------------------------------
-assign  bir_en = (pre_state == I2C_WR_ACK1 || pre_state == I2C_WR_ACK2 || pre_state == I2C_WR_ACK3 ||
+assign  bir_en = (pre_state == I2C_WR_ACK1 || pre_state == I2C_WR_ACK3 ||//(pre_state == I2C_WR_ACK1 || pre_state == I2C_WR_ACK2 || pre_state == I2C_WR_ACK3 ||
                   pre_state == I2C_WR_ACK4 || pre_state == I2C_RD_ACK || pre_state == I2C_RD_DATA)? 1'b0: 1'b1;
 
 assign  i2c_sdat = (bir_en == 1'b1)? i2c_sdat_r: 1'bz;

@@ -323,7 +323,47 @@ always @(posedge clk0 or negedge rstn) begin
 		CPLD_VTT_EN <= 1'b0;	
 	else if(CPLD_VDDQ_VPP_PG_DLY10ms==1) 		
 		CPLD_VTT_EN <= 1'b1;	
+end				
+
+////---------------------------------------------------------------
+///*
+//I2C read temprature
+//*/
+
+reg  			i2c_start;
+wire			i2c_done;
+wire 	[7:0] 	i2c_rd_data;
+reg 	[31:0] 	temp_config_data;
+
+I2C_Ctrl_temp i2c_ctrl(
+ 	.clk    	(clk0    				),
+    .rst_n    	(rstn    				),
+    .temp_config_data (temp_config_data ),
+    .i2c_start  (i2c_start   			),          
+    .i2c_sdat   (CPLD_SDA_TEMP   		),
+    .i2c_sclk   (CPLD_SCL_TEMP   		),
+    .i2c_done   (i2c_done   			),
+    .i2c_rd_data(i2c_rd_data  			));
+	
+	
+always @(posedge clk0 or negedge rstn) begin	
+	if(~rstn) begin	
+		i2c_start <= 0;		
+		temp_config_data <= 32'h89000000;	
+		end		
+	else if ( CPLD_PWR_S0_EN && (~i2c_done) ) begin			
+		i2c_start <= 1;	
+		end
 end			
+
+always @(posedge clk0 or negedge rstn) begin	
+	if(~rstn) begin	
+		Fan_duty <= 50;		
+		end		
+	else if ( i2c_done ) begin			
+		Fan_duty <= i2c_rd_data;	
+		end
+end	
 
 //---------------------------------------------------------------
 /*
