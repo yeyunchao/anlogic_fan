@@ -346,22 +346,23 @@ I2C_Ctrl_temp i2c_ctrl(
     .i2c_rd_data(i2c_rd_data  			));
 	
 	
-always @(posedge clk0 or negedge rstn) begin	
-	if(~rstn) begin	
+	
+reg [23:0] CPLD_I2C_DLY2000ms;
+always @(posedge clk0 or negedge rstn) begin			
+	if(~rstn) begin 
+		CPLD_I2C_DLY2000ms <= 0;	
+		Fan_duty <= 150;		
 		i2c_start <= 0;		
-		temp_config_data <= 32'h89000000;	
-		end		
-	else if ( CPLD_PWR_S0_EN && (~i2c_done) ) begin			
-		i2c_start <= 1;	
-		end
-end			
-
-always @(posedge clk0 or negedge rstn) begin	
-	if(~rstn) begin	
-		Fan_duty <= 50;		
-		end		
-	else if ( i2c_done ) begin			
+		temp_config_data <= 32'h9b000000;			
+		end			
+	else if((CPLD_I2C_DLY2000ms == 1562500-2)||(CPLD_I2C_DLY2000ms == 1562500-1)) begin		
 		Fan_duty <= i2c_rd_data;	
+		//CPLD_I2C_DLY2000ms <= 0;		
+		i2c_start <= 1;		
+		end		
+	else begin		
+		CPLD_I2C_DLY2000ms <= CPLD_I2C_DLY2000ms+1;		
+		i2c_start <= 0;
 		end
 end	
 

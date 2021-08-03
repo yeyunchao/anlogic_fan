@@ -28,7 +28,7 @@ parameter       I2C_START       =   'd1;
 parameter       I2C_WR_IDADDR   =   'd2;
 parameter       I2C_WR_ACK1     =   'd3;
 parameter       I2C_WR_REGADDR1 =   'd4;
-parameter       I2C_WR_ACK2     =   'd5;
+//parameter       I2C_WR_ACK2     =   'd5;
 parameter       I2C_WR_REGADDR2 =   'd6;
 parameter       I2C_WR_ACK3     =   'd7;
 parameter       I2C_WR_DATA     =   'd8;
@@ -42,12 +42,10 @@ parameter       I2C_RD_DATA     =   'd14;
 parameter       I2C_RD_NPACK    =   'd15;
 parameter       I2C_RD_STOP     =   'd16;
 //i2c_sclk freq
-parameter       I2C_FREQ      =   250;    //50Mhz/200Khz/2 = 125
+parameter       I2C_FREQ      =   80;    //7.8125Mhz/200Khz/2 = 20
 parameter       TRANSFER      =   1;
-parameter       CAPTURE       =   125;
-//parameter       I2C_FREQ        =   60;    //50Mhz/200Khz/2 = 125
-//parameter       TRANSFER        =   1;
-//parameter       CAPTURE         =   30;
+parameter       CAPTURE       =   40;
+parameter       STOP	      =   15;
 parameter       SEND_BIT        =   8;
 
 //-------------------------------------------------------
@@ -77,6 +75,7 @@ reg             wr_ack3;
 reg             wr_ack4;
 reg             rd_ack1;
 
+reg				stop_round;
 //-------------------------------------------------------
 //i2c_sclk
 always @(posedge clk or negedge rst_n)begin
@@ -99,7 +98,7 @@ end
 //
 assign  transfer_en = (sclk_cnt == TRANSFER - 1)? 1'b1: 1'b0;
 assign  capture_en  = (sclk_cnt == CAPTURE - 1)? 1'b1: 1'b0;
-
+assign  stop_en  = (sclk_cnt == STOP - 1)? 1'b1: 1'b0;
 //-------------------------------------------------------
 always @(posedge clk or negedge rst_n)begin
     if(rst_n == 1'b0)
@@ -107,7 +106,7 @@ always @(posedge clk or negedge rst_n)begin
     else if(tran_cnt == SEND_BIT && transfer_en == 1'b1)
         tran_cnt <= 'd0;
     else if(((next_state == I2C_WR_IDADDR || next_state == I2C_WR_REGADDR1 ||
-        next_state ==I2C_WR_REGADDR2 || next_state == I2C_WR_DATA ||
+         next_state == I2C_WR_DATA ||   //next_state ==I2C_WR_REGADDR2 ||
         next_state == I2C_RD_IDADDR) && transfer_en == 1'b1) ||
         (next_state == I2C_RD_DATA && capture_en == 1'b1))
         tran_cnt <= tran_cnt + 1'b1;
@@ -118,8 +117,9 @@ end
 //-------------------------------------------------------
 //FSM step1
 always @(posedge clk or negedge rst_n)begin
-    if(rst_n == 1'b0)
-        pre_state <= I2C_IDLE;
+    if(rst_n == 1'b0)begin
+        pre_state <= I2C_IDLE;          
+		end
     else
         pre_state <= next_state;
 end
@@ -170,8 +170,10 @@ always @(*)begin
     I2C_WR_ACK3:
         if(transfer_en == 1'b1 && wr_ack3 == 1'b0 && wr_rd_flag == 1'b0)
             next_state = I2C_WR_DATA;
-        else if(transfer_en == 1'b1 && wr_ack3 == 1'b0 && wr_rd_flag == 1'b1)
-            next_state = I2C_RD_START;
+        else if(transfer_en == 1'b1 && wr_ack3 == 1'b0 && wr_rd_flag == 1'b1) begin           
+            next_state = I2C_WR_STOP;          
+			stop_round = 1;      
+			end
         else if(transfer_en == 1'b1)
             next_state = I2C_IDLE;
         else
@@ -189,13 +191,18 @@ always @(*)begin
         else
             next_state = I2C_WR_ACK4;
     I2C_WR_STOP:
-        if(transfer_en == 1'b1)
-            next_state = I2C_IDLE;
+        if(transfer_en == 1'b1 && wr_rd_flag == 1'b1 && stop_round == 1)begin    
+            next_state = I2C_RD_START;           
+			end            
+		else if((transfer_en == 1'b1 && wr_rd_flag == 1'b1 && stop_round == 0)||(transfer_en == 1'b1 && wr_rd_flag == 1'b0))			
+			next_state = I2C_IDLE; 
         else
             next_state = I2C_WR_STOP;
     I2C_RD_START:
-        if(transfer_en == 1'b1)
-            next_state = I2C_RD_IDADDR;
+        if(transfer_en == 1'b1) begin
+            next_state = I2C_RD_IDADDR;          
+			stop_round = 0;      
+			end
         else
             next_state = I2C_RD_START;
     I2C_RD_IDADDR:
@@ -245,8 +252,11 @@ always @(posedge clk or negedge rst_n)begin
         I2C_WR_STOP:    if(capture_en == 1'b1) i2c_sdat_r <= 1'b1;
         I2C_RD_START:   if(capture_en == 1'b1)  i2c_sdat_r <= 1'b0;
         I2C_RD_IDADDR:  if(transfer_en == 1'b1) i2c_sdat_r <= rd_device_addr['d7 - tran_cnt];
-        I2C_RD_NPACK:   if(transfer_en == 1'b1) i2c_sdat_r <= 1'b0;
-        I2C_RD_STOP:    if(capture_en == 1'b1) i2c_sdat_r <= 1'b1;
+        I2C_RD_NPACK:   if(transfer_en == 1'b1) i2c_sdat_r <= 1'b1;
+        I2C_RD_STOP:    begin        
+						if(stop_en == 1'b1) i2c_sdat_r <= 1'b0;          
+						if(capture_en == 1'b1) i2c_sdat_r <= 1'b1;        
+						end
         default:        i2c_sdat_r <= i2c_sdat_r;
         endcase
     end
