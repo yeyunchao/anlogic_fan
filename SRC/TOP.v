@@ -107,9 +107,9 @@ module TOP(
 //============ Case Open ====================   
 	input	CPLD_CASE_OPEN,//78
 //============ FAN Control ==================
-	output	CPLD_FAN_TACH0,//57   
-	output	CPLD_FAN_TACH1,//53
-    output	CPLD_FAN_TACH2,//51    
+	input	CPLD_FAN_TACH0,//57   
+	input	CPLD_FAN_TACH1,//53
+    input	CPLD_FAN_TACH2,//51    
 	output	reg	CPLD_FAN_PWM0,//54
     output	CPLD_FAN_PWM1,//52    
 	output	CPLD_FAN_PWM2,//61
@@ -373,45 +373,152 @@ I2C_Ctrl_temp i2c_ctrl(
     .i2c_rd_data(i2c_rd_data  			));
 	
 	
-	
-reg [31:0] CPLD_I2C_DLY2000ms;
+parameter [23:0] CYCLE_500MS_TIME = 3906250;	
+parameter [23:0] CYCLE_FULL_TIME = 3906250+10000;
+reg [23:0] CPLD_I2C_DLY500ms;
+
 always @(posedge clk0 or negedge rstn) begin			
 	if(~rstn) begin 
-		CPLD_I2C_DLY2000ms <= 0;	
-		Fan_duty <= 150;		
+		CPLD_I2C_DLY500ms <= 0;				
+		end			
+	else if(CPLD_I2C_DLY500ms == CYCLE_FULL_TIME ) begin		
+		CPLD_I2C_DLY500ms <= 0;			
+		end		
+	else begin		
+		CPLD_I2C_DLY500ms <= CPLD_I2C_DLY500ms+1;		
+		end
+end	
+
+always @(posedge clk0 or negedge rstn) begin			
+	if(~rstn) begin 	
 		i2c_start <= 0;		
 		temp_config_data <= 32'h9b000000;			
 		end			
-	else if(CPLD_I2C_DLY2000ms >= 15625000-100 && CPLD_I2C_DLY2000ms <= 15625000-1) begin		
-		Fan_duty <= i2c_rd_data;		
-		CPLD_I2C_DLY2000ms <= CPLD_I2C_DLY2000ms+1;
-		//CPLD_I2C_DLY2000ms <= 0;		
+	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME-100 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME-1) begin				
+		temp_config_data <= 32'h9b000000;			
 		CPLD_SYS_LED0 <= 1;		
-		i2c_start <= 1;		
+		i2c_start <= 1;		 
 		end					
-	else if(CPLD_I2C_DLY2000ms == 15625000 ) begin		
-		CPLD_I2C_DLY2000ms <= 0;			
-		end		
-	else begin		
-		CPLD_I2C_DLY2000ms <= CPLD_I2C_DLY2000ms+1;		
+//	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME+4000 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME+4100) begin		
+//		temp_config_data <= {cpu_fan_speed_rpm[7:0],24'h000000};			
+//		CPLD_SYS_LED0 <= 1;		
+//		i2c_start <= 1;		
+//		end				
+	else begin			
 		i2c_start <= 0;		
 		CPLD_SYS_LED0 <= 0;
+		end
+end					
+
+parameter [7:0] DEBUG_FAN_DUTY = 100;
+parameter [7:0] TEMP_MIN = 46;
+parameter [7:0] TEMP_MAX = 70;
+reg [7:0] SPEED_TABLE[24:0];
+reg [7:0] Fan_duty;
+reg [7:0] CPLD_TEMP_CPU;
+reg [7:0] CPLD_SPEED_CPU_TARGET;
+
+always @(posedge clk0 or negedge rstn) begin			
+	if(~rstn) begin 
+		Fan_duty = 100;	
+		SPEED_TABLE[0] = 16;		
+		SPEED_TABLE[1] = 18;			
+		SPEED_TABLE[2] = 20;		
+		SPEED_TABLE[3] = 22;		
+		SPEED_TABLE[4] = 24;			
+		SPEED_TABLE[5] = 26;		
+		SPEED_TABLE[7] = 28;		
+		SPEED_TABLE[8] = 30;			
+		SPEED_TABLE[9] = 32;		
+		SPEED_TABLE[10] = 34;		
+		SPEED_TABLE[11] = 36;			
+		SPEED_TABLE[12] = 40;			
+		SPEED_TABLE[13] = 40;		
+		SPEED_TABLE[14] = 42;			
+		SPEED_TABLE[15] = 44;		
+		SPEED_TABLE[16] = 46;		
+		SPEED_TABLE[17] = 48;			
+		SPEED_TABLE[18] = 50;		
+		SPEED_TABLE[19] = 52;		
+		SPEED_TABLE[20] = 54;			
+		SPEED_TABLE[21] = 56;		
+		SPEED_TABLE[22] = 58;		
+		SPEED_TABLE[23] = 60;			
+		SPEED_TABLE[24] = 66;									
+		end			
+	else if(CPLD_I2C_DLY500ms == CYCLE_500MS_TIME+4000) begin		
+		CPLD_TEMP_CPU <= i2c_rd_data;		
+		if(i2c_rd_data >=TEMP_MAX)		
+			 CPLD_SPEED_CPU_TARGET <= 66;		
+		else if(i2c_rd_data <=TEMP_MIN)		
+			 CPLD_SPEED_CPU_TARGET <= 16;		
+		else 	
+			 CPLD_SPEED_CPU_TARGET <= SPEED_TABLE[i2c_rd_data - 46];		 
+		end				 
+			
+	else if(CPLD_I2C_DLY500ms == CYCLE_500MS_TIME+4001) begin		
+		if(CPLD_SPEED_CPU_TARGET < cpu_fan_speed_rpm)begin		
+			if((cpu_fan_speed_rpm - CPLD_SPEED_CPU_TARGET)>2 && Fan_duty>0)		
+				Fan_duty <= Fan_duty -1;
+			end	
+		else if(CPLD_SPEED_CPU_TARGET > cpu_fan_speed_rpm)begin		
+			if((CPLD_SPEED_CPU_TARGET - cpu_fan_speed_rpm)>2 && Fan_duty<255)		
+				Fan_duty <= Fan_duty +1;
+			end			
+		end						
+	else begin			
+		Fan_duty <= Fan_duty;	
 		end
 end	
 
 //---------------------------------------------------------------
 /*
-风扇DUTY控制 35kHz
+风扇speed读取
 */
-parameter [7:0] DEBUG_FAN_DUTY = 100;
-reg [7:0] Fan_duty = DEBUG_FAN_DUTY;
+reg [15:0] Fan_tach0_pulse_count;
+reg [15:0] cpu_fan_speed_rpm;
+reg [1:0 ] edge_detect;
+
+wire 	   count_end ;
+wire 	   count_start ;
+assign count_end= CPLD_I2C_DLY500ms == CYCLE_500MS_TIME? 1'b1:1'b0;
+assign count_start= CPLD_I2C_DLY500ms == 0? 1'b1:1'b0;
+
+always @(posedge clk0 or negedge rstn) begin 
+	if(~rstn) begin 
+		edge_detect <= 2'b11;				
+		end		
+	else begin			
+		edge_detect <= {edge_detect[0],CPLD_FAN_TACH0};		
+		end
+end			
+		
+always @(posedge clk0 or negedge rstn) begin 
+	if(~rstn) begin 
+		Fan_tach0_pulse_count <= 0;					
+		end
+	else if(edge_detect == 2'b01 && count_end == 1'b0)begin		
+		Fan_tach0_pulse_count <= Fan_tach0_pulse_count+1;		
+		end			
+	else if(count_end == 1'b1)begin			
+		cpu_fan_speed_rpm <= Fan_tach0_pulse_count;		
+		end		
+	else if(count_start == 1'b1)begin			
+		Fan_tach0_pulse_count  <= 0;		
+		end
+end	
+//---------------------------------------------------------------
+/*
+风扇DUTY控制 30kHz
+*/
+
 reg [7:0] CPLD_FAN_HIGH_DLYXms;
 always @(posedge clk0 or negedge rstn) begin 
 	if(~rstn) begin 
 		CPLD_FAN_HIGH_DLYXms <= 0;	
 		CPLD_FAN_PWM0 <= 1'b0;				
 		end
-	else if(CPLD_FAN_HIGH_DLYXms >= Fan_duty && CPLD_FAN_HIGH_DLYXms < 222) begin		
+	else if(CPLD_FAN_HIGH_DLYXms >= Fan_duty && CPLD_FAN_HIGH_DLYXms < 255) begin		
 		CPLD_FAN_PWM0 <= 1'b0;		
 		CPLD_FAN_HIGH_DLYXms <= CPLD_FAN_HIGH_DLYXms + 1;	
 		end				
@@ -419,7 +526,7 @@ always @(posedge clk0 or negedge rstn) begin
 		CPLD_FAN_PWM0 <= 1'b1;		
 		CPLD_FAN_HIGH_DLYXms <= CPLD_FAN_HIGH_DLYXms + 1;	
 		end		
-	else if(CPLD_FAN_HIGH_DLYXms == 222) begin		
+	else if(CPLD_FAN_HIGH_DLYXms == 255) begin		
 		CPLD_FAN_PWM0 <= 1'b1;		
 		CPLD_FAN_HIGH_DLYXms <= 1;	
 		end
