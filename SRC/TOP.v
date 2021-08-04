@@ -6,59 +6,81 @@ module TOP(
 	inout	CPLD_LPC_IRQ,	//LOCATION = P3
     inout	[3:0] CPLD_LPC_LAD,//LOCATION = P10,9,8,7
 //======================IIC============================      
-	inout	CPLD_CLKGEN_CLK,//35 CLK GEN I2C;I2C Addr: 0x69 
-    inout   CPLD_CLKGEN_DAT,//36 CLK GEN I2C;I2C Addr: 0x69 
-	//FT2CPLD
-    inout	CPLD_I2C1_SCL,//LOCATION = P14 
-    inout	CPLD_I2C1_SDA,//LOCATION = P15         
+//	inout	CPLD_CLKGEN_CLK,//35 CLK GEN I2C;I2C Addr: 0x69 
+//    inout   CPLD_CLKGEN_DAT,//36 CLK GEN I2C;I2C Addr: 0x69 
+//	//FT2CPLD
+//    inout	CPLD_I2C1_SCL,//LOCATION = P14 
+//    inout	CPLD_I2C1_SDA,//LOCATION = P15         
 	//TEMP    
 	inout	CPLD_SCL_TEMP,//32
     inout	CPLD_SDA_TEMP,//34	
-	output	CPLD_GPIO_CASE0,//30
-    output	CPLD_GPIO_CASE1,//31		
-	//PCIe    
-	inout	CPLD_SLOT_I2C_SDA,//37 
-    inout	CPLD_SLOT_I2C_CLK,//38 	
-//===================Codec =========================   
-	output	CPLD_SPKMUTE_EC,//21 Reserved
-    output	CPLD_MUT_MONO_EC,//25 Reserved
-	output	CPLD_ALLMUTE_EC,//28  Reserved    
+//	output	CPLD_GPIO_CASE0,//30
+//    output	CPLD_GPIO_CASE1,//31		
+//	//PCIe    
+//	inout	CPLD_SLOT_I2C_SDA,//37 
+//    inout	CPLD_SLOT_I2C_CLK,//38 	
+////===================Codec =========================   
+//	output	CPLD_SPKMUTE_EC,//21 Reserved
+//    output	CPLD_MUT_MONO_EC,//25 Reserved
+//	output	CPLD_ALLMUTE_EC,//28  Reserved    
 //===================Power LED==========================	
 //    | S0 | S1 | S3 | S4 | S5 |
 //LED0| L  | B  | B  | L  | L  |
 //LED1| H  | H  | L  | L  | L  |
-	output	CPLD_SYS_LED0,//74
-    output	CPLD_SYS_LED1,//75	
-	output	CPLD_BUZZER,//82  
-//===================F panel==========================	
-	input	CPLD_F_PANEL_PWRBTN,//29
-	input	CPLD_HW_RSTN,//85	
-	output	HD_LED_FP,//84	
-	output	CPLD_HD_LED,//83	
-//================D2000 GPIO==========================	
-	inout	SCI_CPLD,        //LOCATION = P12
-	input	FT_GPIO1_B3_CPLD,//19 high ? CPLD_BUZZER
+	output	reg	CPLD_SYS_LED0,//74
+    input		CPLD_SYS_LED1,//75	
+//	output	CPLD_BUZZER,//82  
+////===================F panel==========================	
+//	input	CPLD_F_PANEL_PWRBTN,//29
+//	input	CPLD_HW_RSTN,//85	
+//	output	HD_LED_FP,//84	
+//	output	CPLD_HD_LED,//83	
+////================D2000 GPIO==========================	
+//	inout	SCI_CPLD,        //LOCATION = P12
+//	input	FT_GPIO1_B3_CPLD,//19 high ? CPLD_BUZZER
 //===================sequence Control=================	
+//	input	FT_PWR_CTR0_CPLD,//LOCATION = P13 RESERVED
+//    input	FT_PWR_CTR1_CPLD,//LOCATION = P17 RESERVED
+//    output	FT_GPIO0_A1,//LOCATION = P18    
+//	output	reg CPLD_PWR_S4_S5_EN,//39
+//    output	CPLD_PWR_S3_EN,//40	
+
+//    //output	CPLD_PWR_S0_EN,//41        for fan test
+//	input	CPLD_PWR_S0_EN,//41       
+
+//	output	reg CPLD_VDD_CORE_EN,//42
+//    output	CPLD_VDDQ_VPP_EN,//43
+//    output	reg CPLD_P1V8_EN,//45
+//    output	reg CPLD_VTT_EN,//47
+//    input	CPLD_VDD_CORE_P0V8_PG,//48
+//    input	CPLD_VDDQ_VPP_PG,//49         
+//	input	CPLD_VTT_PG,//98    
+//	output	SYS_S3N_CPLD,//58
+//    output	reg SYS_S5N_CPLD,//59
+//    output	CPLD_FT_POR_N,//LOCATION = P16 Reserved
+// 	input	CPLD_ATX_PWRGD,//89        
+ 	   
 	input	FT_PWR_CTR0_CPLD,//LOCATION = P13 RESERVED
     input	FT_PWR_CTR1_CPLD,//LOCATION = P17 RESERVED
-    output	FT_GPIO0_A1,//LOCATION = P18    
-	output	reg CPLD_PWR_S4_S5_EN,//39
-    output	CPLD_PWR_S3_EN,//40	
+    input	FT_GPIO0_A1,//LOCATION = P18    
+	input	CPLD_PWR_S4_S5_EN,//39
+    input	CPLD_PWR_S3_EN,//40	
 
     //output	CPLD_PWR_S0_EN,//41        for fan test
 	input	CPLD_PWR_S0_EN,//41       
 
-	output	reg CPLD_VDD_CORE_EN,//42
-    output	CPLD_VDDQ_VPP_EN,//43
-    output	reg CPLD_P1V8_EN,//45
-    output	reg CPLD_VTT_EN,//47
+	input	CPLD_VDD_CORE_EN,//42
+    input	CPLD_VDDQ_VPP_EN,//43
+    input	CPLD_P1V8_EN,//45
+    input	CPLD_VTT_EN,//47
     input	CPLD_VDD_CORE_P0V8_PG,//48
     input	CPLD_VDDQ_VPP_PG,//49         
 	input	CPLD_VTT_PG,//98    
-	output	SYS_S3N_CPLD,//58
-    output	reg SYS_S5N_CPLD,//59
-    output	CPLD_FT_POR_N,//LOCATION = P16 Reserved
- 	input	CPLD_ATX_PWRGD,//89    
+	input	SYS_S3N_CPLD,//58
+    input	SYS_S5N_CPLD,//59
+    input	CPLD_FT_POR_N,//LOCATION = P16 Reserved
+ 	input	CPLD_ATX_PWRGD,//89  	   
+
 //=========== Memery =============================	
 	output	reg CPLD_MEM_RESET_S3,//64
 //=========== PCIE Device========================	
@@ -92,7 +114,7 @@ module TOP(
     output	CPLD_FAN_PWM1,//52    
 	output	CPLD_FAN_PWM2,//61
 //============ OSC 25M =======================
-    input	CPLD_CLK_25M//62
+    input	wire	CPLD_CLK_25M//62
 );    
 
 //		C0        	| 7.812500  MHZ	| 0  DEG  128ns   
@@ -101,10 +123,11 @@ module TOP(
 //		C3        	| 62.500000 MHZ	| 0  DEG  16ns   
 //		C4        	| 125.000000MHZ	| 0  DEG  8ns
 wire	rstn;
+assign 	rstn = CPLD_SYS_LED1;
 wire	clk0,clk1,clk2,clk3,clk4;
 PLL	PLL(.refclk	 (CPLD_CLK_25M),
 		.reset	 (1'b0		),
-		.extlock (rstn		),
+		//.extlock (rstn		),
 		.clk0_out(clk0		),
 		.clk1_out(clk1		),
 		.clk2_out(clk2		),
@@ -113,217 +136,221 @@ PLL	PLL(.refclk	 (CPLD_CLK_25M),
 
 //assign	clk0 = 1'b1;
 
-assign	CPLD_GPIO_CASE0 = 1'b1;
-assign	CPLD_GPIO_CASE1 = 1'b1;
-//assign	CPLD_FAN_PWM0 = 1'b1;
-assign	CPLD_FAN_PWM1 = 1'b1;
-assign	CPLD_FAN_PWM2 = 1'b1;
-assign  CPLD_LAN_PWR  = 1'b0;
-assign  CPLD_TCM_H_DISABLE = 1'b1;
-assign  CPLD_TCM_H_PRESENT = 1'b1;
-assign  CPLD_TCM_H_GPIO    = 1'b1;
-assign  CPLD_HD_LED = 1'b1;
-/*
-当CPLD收到 CPLD_F_PANEL_PWRBTN (IO_R2P)一个20ms左右低脉冲开机信号时，
-过5ms就把 CPLD_RUSB_PWREN0 信号拉高发出
-过5ms就把 CPLD_RUSB_PWREN1 信号拉高发出
-过5ms就把 CPLD_FUSB_PWREN0 信号拉高发出
-过5ms就把 CPLD_FUSB_PWREN1 信号拉高发出
-*/
-//20_000_000ns =156250*128
-reg [17:0] CPLD_F_PANEL_PWRBTN_LOWCNT;
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_F_PANEL_PWRBTN_LOWCNT <= 0;
-	else if(CPLD_F_PANEL_PWRBTN) 		
-		CPLD_F_PANEL_PWRBTN_LOWCNT <= 0;	
-	else if(CPLD_F_PANEL_PWRBTN_LOWCNT!=156250)		
-		CPLD_F_PANEL_PWRBTN_LOWCNT <= CPLD_F_PANEL_PWRBTN_LOWCNT+1;
-end		
-//5_000_000ns = 39062*128
-reg [15:0]	CPLD_F_PANEL_PWRBTN_DLY5ms;
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_F_PANEL_PWRBTN_DLY5ms <= 0;
-	else if(CPLD_F_PANEL_PWRBTN_LOWCNT==156250-1) 		
-		CPLD_F_PANEL_PWRBTN_DLY5ms <= 39062;	
-	else if(CPLD_F_PANEL_PWRBTN_DLY5ms!=0)		
-		CPLD_F_PANEL_PWRBTN_DLY5ms <= CPLD_F_PANEL_PWRBTN_DLY5ms-1;
-end		
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_F_PANEL_PWRBTN_DLY5ms <= 0;
-	else if(CPLD_F_PANEL_PWRBTN_LOWCNT==156250-1) 		
-		CPLD_F_PANEL_PWRBTN_DLY5ms <= 39062;	
-	else if(CPLD_F_PANEL_PWRBTN_DLY5ms!=0)		
-		CPLD_F_PANEL_PWRBTN_DLY5ms <= CPLD_F_PANEL_PWRBTN_DLY5ms-1;
-end					
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_RUSB_PWREN0 <= 1'b0;
-	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
-		CPLD_RUSB_PWREN0 <= 1'b1;	
-end				
+//assign	CPLD_GPIO_CASE0 = 1'b1;
+//assign	CPLD_GPIO_CASE1 = 1'b1;
+////assign	CPLD_FAN_PWM0 = 1'b1;
+//assign	CPLD_FAN_PWM1 = 1'b1;
+//assign	CPLD_FAN_PWM2 = 1'b1;
+//assign  CPLD_LAN_PWR  = 1'b0;
+//assign  CPLD_TCM_H_DISABLE = 1'b1;
+//assign  CPLD_TCM_H_PRESENT = 1'b1;
+//assign  CPLD_TCM_H_GPIO    = 1'b1;
+//assign  CPLD_HD_LED = 1'b1;
+///*
+//当CPLD收到 CPLD_F_PANEL_PWRBTN (IO_R2P)一个20ms左右低脉冲开机信号时，
+//过5ms就把 CPLD_RUSB_PWREN0 信号拉高发出
+//过5ms就把 CPLD_RUSB_PWREN1 信号拉高发出
+//过5ms就把 CPLD_FUSB_PWREN0 信号拉高发出
+//过5ms就把 CPLD_FUSB_PWREN1 信号拉高发出
+//*/
+////20_000_000ns =156250*128
+//reg [17:0] CPLD_F_PANEL_PWRBTN_LOWCNT;
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_F_PANEL_PWRBTN_LOWCNT <= 0;
+//	else if(CPLD_F_PANEL_PWRBTN) 		
+//		CPLD_F_PANEL_PWRBTN_LOWCNT <= 0;	
+//	else if(CPLD_F_PANEL_PWRBTN_LOWCNT!=156250)		
+//		CPLD_F_PANEL_PWRBTN_LOWCNT <= CPLD_F_PANEL_PWRBTN_LOWCNT+1;
+//end		
+////5_000_000ns = 39062*128
+//reg [15:0]	CPLD_F_PANEL_PWRBTN_DLY5ms;
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_F_PANEL_PWRBTN_DLY5ms <= 0;
+//	else if(CPLD_F_PANEL_PWRBTN_LOWCNT==156250-1) 		
+//		CPLD_F_PANEL_PWRBTN_DLY5ms <= 39062;	
+//	else if(CPLD_F_PANEL_PWRBTN_DLY5ms!=0)		
+//		CPLD_F_PANEL_PWRBTN_DLY5ms <= CPLD_F_PANEL_PWRBTN_DLY5ms-1;
+//end		
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_RUSB_PWREN1 <= 1'b0;
-	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
-		CPLD_RUSB_PWREN1 <= 1'b1;	
-end			
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_F_PANEL_PWRBTN_DLY5ms <= 0;
+//	else if(CPLD_F_PANEL_PWRBTN_LOWCNT==156250-1) 		
+//		CPLD_F_PANEL_PWRBTN_DLY5ms <= 39062;	
+//	else if(CPLD_F_PANEL_PWRBTN_DLY5ms!=0)		
+//		CPLD_F_PANEL_PWRBTN_DLY5ms <= CPLD_F_PANEL_PWRBTN_DLY5ms-1;
+//end					
+
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_RUSB_PWREN0 <= 1'b0;
+//	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
+//		CPLD_RUSB_PWREN0 <= 1'b1;	
+//end				
+
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_RUSB_PWREN1 <= 1'b0;
+//	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
+//		CPLD_RUSB_PWREN1 <= 1'b1;	
+//end			
 		
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_FUSB_PWREN0 <= 1'b0;
-	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
-		CPLD_FUSB_PWREN0 <= 1'b1;	
-end			
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_FUSB_PWREN0 <= 1'b0;
+//	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
+//		CPLD_FUSB_PWREN0 <= 1'b1;	
+//end			
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_FUSB_PWREN1 <= 1'b0;
-	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
-		CPLD_FUSB_PWREN1 <= 1'b1;	
-end			
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_FUSB_PWREN1 <= 1'b0;
+//	else if(CPLD_F_PANEL_PWRBTN_DLY5ms==1) 		
+//		CPLD_FUSB_PWREN1 <= 1'b1;	
+//end			
 			
-/*
-当CPLD电源供电稳定后，过10ms就把 CPLD_PWR_S4_S5_EN 信号拉高发出
-当CPLD电源供电稳定后，过10ms就把 SYS_S5N_CPLD 信号拉高发出
-*/
-reg [16:0] DLY10ms; //78125*128
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) DLY10ms <= 0;
-	else DLY10ms <= DLY10ms + 1;
-end	
+///*
+//当CPLD电源供电稳定后，过10ms就把 CPLD_PWR_S4_S5_EN 信号拉高发出
+//当CPLD电源供电稳定后，过10ms就把 SYS_S5N_CPLD 信号拉高发出
+//*/
+//reg [16:0] DLY10ms; //78125*128
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) DLY10ms <= 0;
+//	else DLY10ms <= DLY10ms + 1;
+//end	
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_PWR_S4_S5_EN <= 1'b0;	
-	else if(DLY10ms==78125) 		
-		CPLD_PWR_S4_S5_EN <= 1'b1;	
-end			
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_PWR_S4_S5_EN <= 1'b0;	
+//	else if(DLY10ms==78125) 		
+//		CPLD_PWR_S4_S5_EN <= 1'b1;	
+//end			
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		SYS_S5N_CPLD <= 1'b0;	
-	else if(DLY10ms==78125) 		
-		SYS_S5N_CPLD <= 1'b1;	
-end		
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		SYS_S5N_CPLD <= 1'b0;	
+//	else if(DLY10ms==78125) 		
+//		SYS_S5N_CPLD <= 1'b1;	
+//end		
 
-/*
-当CPLD收到 CPLD_VTT_PG (IO_L5N)高电平信号后，过10ms发出 CPLD_VDD_CORE_EN 高电平信号
-*/
-reg [16:0] CPLD_VTT_PG_DLY10ms;
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_VTT_PG_DLY10ms <= 0;	
-	else if(CPLD_VTT_PG_DLY10ms!=0) 		
-		CPLD_VTT_PG_DLY10ms <= CPLD_VTT_PG_DLY10ms - 1;	
-	else if(CPLD_VTT_PG)		
-		CPLD_VTT_PG_DLY10ms <= 78125;
-end		
+///*
+//当CPLD收到 CPLD_VTT_PG (IO_L5N)高电平信号后，过10ms发出 CPLD_VDD_CORE_EN 高电平信号
+//*/
+//reg [16:0] CPLD_VTT_PG_DLY10ms;
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_VTT_PG_DLY10ms <= 0;	
+//	else if(CPLD_VTT_PG_DLY10ms!=0) 		
+//		CPLD_VTT_PG_DLY10ms <= CPLD_VTT_PG_DLY10ms - 1;	
+//	else if(CPLD_VTT_PG)		
+//		CPLD_VTT_PG_DLY10ms <= 78125;
+//end		
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_VDD_CORE_EN <= 1'b0;	
-	else if(CPLD_VTT_PG_DLY10ms==1) 		
-		CPLD_VDD_CORE_EN <= 1'b1;	
-end		
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_VDD_CORE_EN <= 1'b0;	
+//	else if(CPLD_VTT_PG_DLY10ms==1) 		
+//		CPLD_VDD_CORE_EN <= 1'b1;	
+//end		
 
-/*
-当CPLD收到 CPLD_VDD_CORE_P0V8_PG (IO_R10N)高电平信号后，过10ms发出 CPLD_P1V8_EN 高电平信号
-当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_PCIERST_SLOT 高电平信号
-当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_PCIE_LAN_RST_N 高电平信号
-当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_TCM_ISORSTN 高电平信号
-当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_TCM_PORN 高电平信号
-当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_SAFECARD_RSTN 高电平信号
-当CPLD发出 CPLD_PCIERST_SLOT (IO_TE5P)信号后，过20ms发出 CPLD_MEM_RESET_S3 高电平信号
-*/
-reg [16:0] CPLD_VDD_CORE_P0V8_PG_DLY10ms;
-reg [17:0] CPLD_P1V8_EN_DLY20ms;
-reg [17:0] CPLD_PCIERST_SLOT_DLY20ms;
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_VDD_CORE_P0V8_PG_DLY10ms <= 0;	
-	else if(CPLD_VDD_CORE_P0V8_PG_DLY10ms!=0) 		
-		CPLD_VDD_CORE_P0V8_PG_DLY10ms <= CPLD_VDD_CORE_P0V8_PG_DLY10ms - 1;	
-	else if(CPLD_VDD_CORE_P0V8_PG)		
-		CPLD_VDD_CORE_P0V8_PG_DLY10ms <= 78125;
-end		
+///*
+//当CPLD收到 CPLD_VDD_CORE_P0V8_PG (IO_R10N)高电平信号后，过10ms发出 CPLD_P1V8_EN 高电平信号
+//当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_PCIERST_SLOT 高电平信号
+//当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_PCIE_LAN_RST_N 高电平信号
+//当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_TCM_ISORSTN 高电平信号
+//当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_TCM_PORN 高电平信号
+//当CPLD发出 CPLD_P1V8_EN (IO_R9P)信号后，过20ms发出 CPLD_SAFECARD_RSTN 高电平信号
+//当CPLD发出 CPLD_PCIERST_SLOT (IO_TE5P)信号后，过20ms发出 CPLD_MEM_RESET_S3 高电平信号
+//*/
+//reg [16:0] CPLD_VDD_CORE_P0V8_PG_DLY10ms;
+//reg [17:0] CPLD_P1V8_EN_DLY20ms;
+//reg [17:0] CPLD_PCIERST_SLOT_DLY20ms;
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_VDD_CORE_P0V8_PG_DLY10ms <= 0;	
+//	else if(CPLD_VDD_CORE_P0V8_PG_DLY10ms!=0) 		
+//		CPLD_VDD_CORE_P0V8_PG_DLY10ms <= CPLD_VDD_CORE_P0V8_PG_DLY10ms - 1;	
+//	else if(CPLD_VDD_CORE_P0V8_PG)		
+//		CPLD_VDD_CORE_P0V8_PG_DLY10ms <= 78125;
+//end		
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_P1V8_EN <= 1'b0;	
-	else if(CPLD_VDD_CORE_P0V8_PG_DLY10ms==1) 		
-		CPLD_P1V8_EN <= 1'b1;	
-end				
-//-------------------------------------------------------------
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_P1V8_EN_DLY20ms <= 0;	
-	else if(CPLD_VDD_CORE_P0V8_PG_DLY10ms==1) 		
-		CPLD_P1V8_EN_DLY20ms <= 78125*2;	
-	else if(CPLD_P1V8_EN_DLY20ms!=0)		
-		CPLD_P1V8_EN_DLY20ms <= CPLD_P1V8_EN_DLY20ms - 1;
-end			
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_P1V8_EN <= 1'b0;	
+//	else if(CPLD_VDD_CORE_P0V8_PG_DLY10ms==1) 		
+//		CPLD_P1V8_EN <= 1'b1;	
+//end				
+////-------------------------------------------------------------
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_P1V8_EN_DLY20ms <= 0;	
+//	else if(CPLD_VDD_CORE_P0V8_PG_DLY10ms==1) 		
+//		CPLD_P1V8_EN_DLY20ms <= 78125*2;	
+//	else if(CPLD_P1V8_EN_DLY20ms!=0)		
+//		CPLD_P1V8_EN_DLY20ms <= CPLD_P1V8_EN_DLY20ms - 1;
+//end			
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) begin
-		CPLD_PCIERST_SLOT   <= 1'b0;		
-		CPLD_PCIE_LAN_RST_N <= 1'b0;	
-		CPLD_TCM_ISORSTN    <= 1'b0;		
-		CPLD_SAFECARD_RSTN  <= 1'b0;		
-		CPLD_TCM_PORN       <= 1'b0;
-	end else if(CPLD_P1V8_EN_DLY20ms==1) begin		
-		CPLD_PCIERST_SLOT   <= 1'b1;	
-		CPLD_PCIE_LAN_RST_N <= 1'b1;		
-		CPLD_TCM_ISORSTN    <= 1'b1;		
-		CPLD_SAFECARD_RSTN  <= 1'b1;		
-		CPLD_TCM_PORN       <= 1'b1;
-	end
-end			
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) begin
+//		CPLD_PCIERST_SLOT   <= 1'b0;		
+//		CPLD_PCIE_LAN_RST_N <= 1'b0;	
+//		CPLD_TCM_ISORSTN    <= 1'b0;		
+//		CPLD_SAFECARD_RSTN  <= 1'b0;		
+//		CPLD_TCM_PORN       <= 1'b0;
+//	end else if(CPLD_P1V8_EN_DLY20ms==1) begin		
+//		CPLD_PCIERST_SLOT   <= 1'b1;	
+//		CPLD_PCIE_LAN_RST_N <= 1'b1;		
+//		CPLD_TCM_ISORSTN    <= 1'b1;		
+//		CPLD_SAFECARD_RSTN  <= 1'b1;		
+//		CPLD_TCM_PORN       <= 1'b1;
+//	end
+//end			
 				
 			
 
 
-//-------------------------------------------------------------
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_PCIERST_SLOT_DLY20ms <= 0;	
-	else if(CPLD_P1V8_EN_DLY20ms==1) 		
-		CPLD_PCIERST_SLOT_DLY20ms <= 78125*2;	
-	else if(CPLD_PCIERST_SLOT_DLY20ms!=0)		
-		CPLD_PCIERST_SLOT_DLY20ms <= CPLD_PCIERST_SLOT_DLY20ms - 1;
-end			
+////-------------------------------------------------------------
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_PCIERST_SLOT_DLY20ms <= 0;	
+//	else if(CPLD_P1V8_EN_DLY20ms==1) 		
+//		CPLD_PCIERST_SLOT_DLY20ms <= 78125*2;	
+//	else if(CPLD_PCIERST_SLOT_DLY20ms!=0)		
+//		CPLD_PCIERST_SLOT_DLY20ms <= CPLD_PCIERST_SLOT_DLY20ms - 1;
+//end			
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_MEM_RESET_S3 <= 1'b0;	
-	else if(CPLD_PCIERST_SLOT_DLY20ms==1) 		
-		CPLD_MEM_RESET_S3 <= 1'b1;	
-end
-//-------------------------------------------------------------
-/*
-当CPLD收到 CPLD_VDDQ_VPP_PG (IO_R10P)高电平信号后，过10ms发出 CPLD_VTT_EN 高电平信号
-*/
-reg [16:0] CPLD_VDDQ_VPP_PG_DLY10ms;
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_VDDQ_VPP_PG_DLY10ms <= 0;	
-	else if(CPLD_VDDQ_VPP_PG_DLY10ms!=0) 		
-		CPLD_VDDQ_VPP_PG_DLY10ms <= CPLD_VDDQ_VPP_PG_DLY10ms - 1;	
-	else if(CPLD_VDDQ_VPP_PG)		
-		CPLD_VDDQ_VPP_PG_DLY10ms <= 78125;
-end		
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_MEM_RESET_S3 <= 1'b0;	
+//	else if(CPLD_PCIERST_SLOT_DLY20ms==1) 		
+//		CPLD_MEM_RESET_S3 <= 1'b1;	
+//end
+////-------------------------------------------------------------
+///*
+//当CPLD收到 CPLD_VDDQ_VPP_PG (IO_R10P)高电平信号后，过10ms发出 CPLD_VTT_EN 高电平信号
+//*/
+//reg [16:0] CPLD_VDDQ_VPP_PG_DLY10ms;
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_VDDQ_VPP_PG_DLY10ms <= 0;	
+//	else if(CPLD_VDDQ_VPP_PG_DLY10ms!=0) 		
+//		CPLD_VDDQ_VPP_PG_DLY10ms <= CPLD_VDDQ_VPP_PG_DLY10ms - 1;	
+//	else if(CPLD_VDDQ_VPP_PG)		
+//		CPLD_VDDQ_VPP_PG_DLY10ms <= 78125;
+//end		
 
-always @(posedge clk0 or negedge rstn) begin 
-	if(~rstn) 
-		CPLD_VTT_EN <= 1'b0;	
-	else if(CPLD_VDDQ_VPP_PG_DLY10ms==1) 		
-		CPLD_VTT_EN <= 1'b1;	
-end				
+//always @(posedge clk0 or negedge rstn) begin 
+//	if(~rstn) 
+//		CPLD_VTT_EN <= 1'b0;	
+//	else if(CPLD_VDDQ_VPP_PG_DLY10ms==1) 		
+//		CPLD_VTT_EN <= 1'b1;	
+//end				
+
+
 
 ////---------------------------------------------------------------
 ///*
@@ -347,7 +374,7 @@ I2C_Ctrl_temp i2c_ctrl(
 	
 	
 	
-reg [23:0] CPLD_I2C_DLY2000ms;
+reg [31:0] CPLD_I2C_DLY2000ms;
 always @(posedge clk0 or negedge rstn) begin			
 	if(~rstn) begin 
 		CPLD_I2C_DLY2000ms <= 0;	
@@ -355,14 +382,20 @@ always @(posedge clk0 or negedge rstn) begin
 		i2c_start <= 0;		
 		temp_config_data <= 32'h9b000000;			
 		end			
-	else if((CPLD_I2C_DLY2000ms == 1562500-2)||(CPLD_I2C_DLY2000ms == 1562500-1)) begin		
-		Fan_duty <= i2c_rd_data;	
+	else if(CPLD_I2C_DLY2000ms >= 15625000-100 && CPLD_I2C_DLY2000ms <= 15625000-1) begin		
+		Fan_duty <= i2c_rd_data;		
+		CPLD_I2C_DLY2000ms <= CPLD_I2C_DLY2000ms+1;
 		//CPLD_I2C_DLY2000ms <= 0;		
+		CPLD_SYS_LED0 <= 1;		
 		i2c_start <= 1;		
+		end					
+	else if(CPLD_I2C_DLY2000ms == 15625000 ) begin		
+		CPLD_I2C_DLY2000ms <= 0;			
 		end		
 	else begin		
 		CPLD_I2C_DLY2000ms <= CPLD_I2C_DLY2000ms+1;		
-		i2c_start <= 0;
+		i2c_start <= 0;		
+		CPLD_SYS_LED0 <= 0;
 		end
 end	
 

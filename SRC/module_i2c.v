@@ -29,18 +29,18 @@ parameter       I2C_WR_IDADDR   =   'd2;
 parameter       I2C_WR_ACK1     =   'd3;
 parameter       I2C_WR_REGADDR1 =   'd4;
 //parameter       I2C_WR_ACK2     =   'd5;
-parameter       I2C_WR_REGADDR2 =   'd6;
-parameter       I2C_WR_ACK3     =   'd7;
-parameter       I2C_WR_DATA     =   'd8;
-parameter       I2C_WR_ACK4     =   'd9;
-parameter       I2C_WR_STOP     =   'd10;
+parameter       I2C_WR_REGADDR2 =   'd5;
+parameter       I2C_WR_ACK3     =   'd6;
+parameter       I2C_WR_DATA     =   'd7;
+parameter       I2C_WR_ACK4     =   'd8;
+parameter       I2C_WR_STOP     =   'd9;
 //-------------------------------------------------------
-parameter       I2C_RD_START    =   'd11;
-parameter       I2C_RD_IDADDR   =   'd12;
-parameter       I2C_RD_ACK      =   'd13;
-parameter       I2C_RD_DATA     =   'd14;
-parameter       I2C_RD_NPACK    =   'd15;
-parameter       I2C_RD_STOP     =   'd16;
+parameter       I2C_RD_START    =   'd10;
+parameter       I2C_RD_IDADDR   =   'd11;
+parameter       I2C_RD_ACK      =   'd12;
+parameter       I2C_RD_DATA     =   'd13;
+parameter       I2C_RD_NPACK    =   'd14;
+parameter       I2C_RD_STOP     =   'd15;
 //i2c_sclk freq
 parameter       I2C_FREQ      =   80;    //7.8125Mhz/200Khz/2 = 20
 parameter       TRANSFER      =   1;
@@ -320,7 +320,7 @@ assign  bir_en = (pre_state == I2C_WR_ACK1 || pre_state == I2C_WR_ACK3 ||//(pre_
 assign  i2c_sdat = (bir_en == 1'b1)? i2c_sdat_r: 1'bz;
 
 assign  i2c_sclk = i2c_sclk_r;
-assign  i2c_done = (pre_state == I2C_WR_STOP && next_state == I2C_IDLE ||
-                    pre_state == I2C_RD_STOP && next_state == I2C_IDLE)? 1'b1: 1'b0;
+assign  i2c_done = ((pre_state == I2C_WR_STOP && next_state == I2C_IDLE) ||
+                    (pre_state == I2C_RD_STOP && next_state == I2C_IDLE))? 1'b1: 1'b0;
 
 endmodule
