@@ -112,8 +112,12 @@ module LPC_Peri (
    `define IO_WR_TAR_LCLK2  5'h15
    `define IO_WR_SYNC       5'h16
    `define LAST_TAR_LCLK1   5'h18
-   `define LAST_TAR_LCLK2   5'h19
-
+   `define LAST_TAR_LCLK2   5'h19   
+	   
+   `define IO_RD_WAIT_LCLK1   5'h17  
+   `define IO_RD_WAIT_LCLK2   5'h1A       
+   `define IO_WR_WAIT_LCLK1   5'h1B  
+   `define IO_WR_WAIT_LCLK2   5'h1C  
 // --------------------------------------------------------------------------
 // FSM -- state machine supporting LPC I/O read & I/O write only
 // --------------------------------------------------------------------------
@@ -134,9 +138,10 @@ assign next_state = (lreset_n == 1'b0) ? `IDLE :
                     (current_state == `IO_RD_ADDR_LCLK2) ? `IO_RD_ADDR_LCLK3 :
                     (current_state == `IO_RD_ADDR_LCLK3) ? `IO_RD_ADDR_LCLK4 :
                     (current_state == `IO_RD_ADDR_LCLK4) ? `IO_RD_TAR_LCLK1  :
-                    (current_state == `IO_RD_TAR_LCLK1 ) ? `IO_RD_TAR_LCLK2  :
-                    ((current_state == `IO_RD_TAR_LCLK2 ) && (addr_hit == 1'b0))? `IDLE       :
-                    ((current_state == `IO_RD_TAR_LCLK2 ) && (addr_hit == 1'b1))? `IO_RD_SYNC :
+                    (current_state == `IO_RD_TAR_LCLK1 ) ? `IO_RD_WAIT_LCLK1  :                    
+					(current_state == `IO_RD_WAIT_LCLK1 ) ? `IO_RD_WAIT_LCLK2  :
+                    ((current_state == `IO_RD_WAIT_LCLK2 ) && (addr_hit == 1'b0))? `IDLE       :
+                    ((current_state == `IO_RD_WAIT_LCLK2 ) && (addr_hit == 1'b1))? `IO_RD_SYNC :
                     (current_state == `IO_RD_SYNC      ) ? `IO_RD_DATA_LCLK1 :
                     (current_state == `IO_RD_DATA_LCLK1) ? `IO_RD_DATA_LCLK2 :
                     (current_state == `IO_RD_DATA_LCLK2) ? `LAST_TAR_LCLK1   :
@@ -147,9 +152,10 @@ assign next_state = (lreset_n == 1'b0) ? `IDLE :
                     (current_state == `IO_WR_ADDR_LCLK4) ? `IO_WR_DATA_LCLK1 :
                     (current_state == `IO_WR_DATA_LCLK1) ? `IO_WR_DATA_LCLK2 :
                     (current_state == `IO_WR_DATA_LCLK2) ? `IO_WR_TAR_LCLK1  :
-                    (current_state == `IO_WR_TAR_LCLK1 ) ? `IO_WR_TAR_LCLK2  :
-                    ((current_state == `IO_WR_TAR_LCLK2 ) && (addr_hit == 1'b0))? `IDLE       :
-                    ((current_state == `IO_WR_TAR_LCLK2 ) && (addr_hit == 1'b1))? `IO_WR_SYNC :
+                    (current_state == `IO_WR_TAR_LCLK1 ) ? `IO_WR_WAIT_LCLK1  :                    
+					(current_state == `IO_WR_WAIT_LCLK1 ) ? `IO_WR_WAIT_LCLK2  :
+                    ((current_state == `IO_WR_WAIT_LCLK2 ) && (addr_hit == 1'b0))? `IDLE       :
+                    ((current_state == `IO_WR_WAIT_LCLK2 ) && (addr_hit == 1'b1))? `IO_WR_SYNC :
                     (current_state == `IO_WR_SYNC      ) ? `LAST_TAR_LCLK1   :
                     (current_state == `LAST_TAR_LCLK1  ) ? `LAST_TAR_LCLK2   :
                     `IDLE;
@@ -176,7 +182,8 @@ assign sync_en = (next_state == `IO_RD_SYNC) ? 1'b1 :
 
 assign rd_data_en = (next_state == `IO_RD_DATA_LCLK1) ? 2'b01 :
                     (next_state == `IO_RD_DATA_LCLK2) ? 2'b10 :
-                    2'b00;
+                    2'b00;                       
+                 
 
 assign wr_data_en = (next_state == `IO_WR_DATA_LCLK1) ? 2'b01 :
                     (next_state == `IO_WR_DATA_LCLK2) ? 2'b10 :
@@ -205,11 +212,17 @@ always @ (posedge lclk) begin
    //LAD = (current_state == `IO_WR_SYNC) ? 4'b0000 : 4'bzzzz; // On the beginning of write sync, it should be assigned to 'sync success' (0)
 end
 
-assign lad_in = (current_state == `IO_WR_SYNC) ? 4'b0000 : 4'bzzzz;
-assign lad_in = (rd_data_en[0]) ? lpc_data_out: 4'bzzzz;
-assign lad_in = (rd_data_en[1]) ? lpc_data_out: 4'bzzzz;
+//assign lad_in = (current_state == `IO_WR_SYNC) ? 4'b0000 : 4'bzzzz;
+//assign lad_in = (rd_data_en[0]) ? lpc_data_out: 4'bzzzz;
+//assign lad_in = (rd_data_en[1]) ? lpc_data_out: 4'bzzzz;
 
-
+assign lad_in = (current_state == `IO_WR_SYNC) ? 4'b0000 : 4'bZZZZ;
+assign lad_in = (current_state == `IO_RD_SYNC) ? 4'b0000 : 4'bZZZZ;
+assign lad_in = (current_state == `IO_RD_DATA_LCLK1) ? din[3:0]: 4'bZZZZ;
+assign lad_in = (current_state == `IO_RD_DATA_LCLK2) ? din[7:4]: 4'bZZZZ;
+assign lad_in = (current_state == `IO_RD_WAIT_LCLK1) ? 4'b0110 : 4'bZZZZ;
+assign lad_in = (current_state == `IO_RD_WAIT_LCLK2) ? 4'b0110 : 4'bZZZZ;
+assign lad_in = (current_state == `IO_WR_WAIT_LCLK1) ? 4'b0110 : 4'bZZZZ;
 // Read Back-side Data to LPC
 
 assign lpc_data_out = (sync_en == 1'b1      ) ? 4'h0     :

@@ -1,6 +1,6 @@
 module TOP( 
 //======================LPC===========================
-	input	CPLD_LPC_CLK_R, //LOCATION  = P1 33MHz
+	input	CPLD_LPC_CLK_R, //LOCATION  = P21 33MHz
 	input	CPLD_LPC_LFRAME,//LOCATION = P2		
 	input	CPLD_LPC_RST,   //LOCATION = P4 
 	inout	CPLD_LPC_IRQ,	//LOCATION = P3
@@ -28,7 +28,7 @@ module TOP(
 //LED0| L  | B  | B  | L  | L  |
 //LED1| H  | H  | L  | L  | L  |
 	output	reg	CPLD_SYS_LED0,//74
-    input		CPLD_SYS_LED1,//75	
+    output	reg CPLD_SYS_LED1,//75	
 //	output	CPLD_BUZZER,//82  
 ////===================F panel==========================	
 //	input	CPLD_F_PANEL_PWRBTN,//29
@@ -111,23 +111,23 @@ module TOP(
 	input	CPLD_FAN_TACH1,//53
     input	CPLD_FAN_TACH2,//51    
 	output	reg	CPLD_FAN_PWM0,//54
-    output	CPLD_FAN_PWM1,//52    
-	output	CPLD_FAN_PWM2,//61
+    output	wire CPLD_FAN_PWM1,//52    
+	output	wire CPLD_FAN_PWM2,//61
 //============ OSC 25M =======================
     input	wire	CPLD_CLK_25M//62
 );    
 
-//		C0        	| 7.812500  MHZ	| 0  DEG  128ns   
-//		C1        	| 15.625000 MHZ	| 0  DEG  64ns   
-//		C2        	| 31.250000 MHZ	| 0  DEG  32ns   
-//		C3        	| 62.500000 MHZ	| 0  DEG  16ns   
-//		C4        	| 125.000000MHZ	| 0  DEG  8ns
+//		Clock name	| Frequency 	| Phase shift
+//		C0        	| 8.250000  MHZ	| 0  DEG     
+//		C1        	| 16.500000 MHZ	| 0  DEG     
+//		C2        	| 33.000000 MHZ	| 0  DEG     
+//		C3        	| 66.000000 MHZ	| 0  DEG     
+//		C4        	| 132.000000MHZ	| 0  DEG  
 wire	rstn;
-assign 	rstn = CPLD_SYS_LED1;
 wire	clk0,clk1,clk2,clk3,clk4;
-PLL	PLL(.refclk	 (CPLD_CLK_25M),
+PLL	PLL(.refclk	 (CPLD_LPC_CLK_R),
 		.reset	 (1'b0		),
-		//.extlock (rstn		),
+		.extlock (rstn		),
 		.clk0_out(clk0		),
 		.clk1_out(clk1		),
 		.clk2_out(clk2		),
@@ -373,8 +373,8 @@ I2C_Ctrl_temp i2c_ctrl(
     .i2c_rd_data(i2c_rd_data  			));
 	
 	
-parameter [23:0] CYCLE_500MS_TIME = 3906250;	
-parameter [23:0] CYCLE_FULL_TIME = 3906250+10000;
+parameter [23:0] CYCLE_500MS_TIME = 4128096;	
+parameter [23:0] CYCLE_FULL_TIME = 4128096+10000;
 reg [23:0] CPLD_I2C_DLY500ms;
 
 always @(posedge clk0 or negedge rstn) begin			
@@ -395,8 +395,7 @@ always @(posedge clk0 or negedge rstn) begin
 		temp_config_data <= 32'h9b000000;			
 		end			
 	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME-100 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME-1) begin				
-		temp_config_data <= 32'h9b000000;			
-		CPLD_SYS_LED0 <= 1;		
+		temp_config_data <= 32'h9b000000;				
 		i2c_start <= 1;		 
 		end					
 //	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME+4000 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME+4100) begin		
@@ -406,7 +405,6 @@ always @(posedge clk0 or negedge rstn) begin
 //		end				
 	else begin			
 		i2c_start <= 0;		
-		CPLD_SYS_LED0 <= 0;
 		end
 end					
 
@@ -511,6 +509,8 @@ end
 /*
 风扇DUTY控制 30kHz
 */
+assign CPLD_FAN_PWM1 = CPLD_FAN_PWM0;	// for si test
+assign CPLD_FAN_PWM2 = CPLD_FAN_PWM0;   // for si test
 
 reg [7:0] CPLD_FAN_HIGH_DLYXms;
 always @(posedge clk0 or negedge rstn) begin 
@@ -529,6 +529,67 @@ always @(posedge clk0 or negedge rstn) begin
 	else if(CPLD_FAN_HIGH_DLYXms == 255) begin		
 		CPLD_FAN_PWM0 <= 1'b1;		
 		CPLD_FAN_HIGH_DLYXms <= 1;	
+		end
+end	
+
+
+
+reg	addr_hit;
+wire [4:0]	current_state;
+wire [15:0]	lpc_addr;
+reg [7:0]	din;
+wire io_rden_sm;
+wire io_wren_sm;
+LPC_Peri LPC_Peri_inst(
+
+   // LPC Interface
+   .lclk	(	CPLD_LPC_CLK_R	), // Clock
+   .lreset_n(	CPLD_LPC_RST	), // Reset - Active Low (Same as PCI Reset)
+   .lframe_n(	CPLD_LPC_LFRAME	), // Frame - Active Low
+   .lad_in	(	CPLD_LPC_LAD	), // Address/Data Bus
+   .addr_hit(	addr_hit		),     
+   .current_state(current_state ),
+   .din		(	din				),
+//   output reg  [ 7:0] lpc_data_in  ,
+//   output wire [ 3:0] lpc_data_out ,
+   .lpc_addr(	lpc_addr		),
+//   output wire        lpc_en       ,
+	.io_rden_sm(	io_rden_sm		),
+	.io_wren_sm(	io_wren_sm		)
+);
+
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
+	if(~rstn) begin 
+		addr_hit <= 1'b0;		
+		din <= 1'b0;			
+		end				
+	else if(lpc_addr == 16'h002e) begin		
+		addr_hit <= 1'b1;	
+		din <= 8'h27;				
+		end					
+	else if(lpc_addr == 16'h002f) begin		
+		addr_hit <= 1'b1;	
+		din <= 8'haa;			
+		end				
+	else if(lpc_addr == 16'h0064) begin		
+		addr_hit <= 1'b1;	
+		din <= 8'h55;			
+		end		
+	else if(lpc_addr == 16'h0060) begin		
+		addr_hit <= 1'b1;	
+		din <= 8'hff;			
+		end		
+	else if(lpc_addr == 16'h0062) begin		
+		addr_hit <= 1'b1;	
+		din <= 8'h00;			
+		end		
+	else if(lpc_addr == 16'h0066) begin		
+		addr_hit <= 1'b1;	
+		din <= 8'hcc;			
+		end		
+	else  begin		
+		addr_hit <= 1'b0;	
+		din <= 8'hcc;			
 		end
 end	
 
