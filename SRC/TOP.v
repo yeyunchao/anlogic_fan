@@ -363,7 +363,7 @@ wire 	[7:0] 	i2c_rd_data;
 reg 	[31:0] 	temp_config_data;
 
 I2C_Ctrl_temp i2c_ctrl(
- 	.clk    	(clk0    				),
+ 	.clk    	(CPLD_LPC_CLK_R			),
     .rst_n    	(rstn    				),
     .temp_config_data (temp_config_data ),
     .i2c_start  (i2c_start   			),          
@@ -373,11 +373,12 @@ I2C_Ctrl_temp i2c_ctrl(
     .i2c_rd_data(i2c_rd_data  			));
 	
 	
-parameter [23:0] CYCLE_500MS_TIME = 4128096;	
-parameter [23:0] CYCLE_FULL_TIME = 4128096+10000;
+parameter [23:0] CYCLE_500MS_TIME = 16512384;	
+parameter [23:0] CYCLE_250MS_TIME = 8256192;	
+parameter [23:0] CYCLE_FULL_TIME = 16512384+40000;
 reg [23:0] CPLD_I2C_DLY500ms;
 
-always @(posedge clk0 or negedge rstn) begin			
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin			
 	if(~rstn) begin 
 		CPLD_I2C_DLY500ms <= 0;				
 		end			
@@ -389,20 +390,16 @@ always @(posedge clk0 or negedge rstn) begin
 		end
 end	
 
-always @(posedge clk0 or negedge rstn) begin			
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin			
 	if(~rstn) begin 	
 		i2c_start <= 0;		
 		temp_config_data <= 32'h9b000000;			
 		end			
-	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME-100 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME-1) begin				
+	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME-400 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME-1) begin				
 		temp_config_data <= 32'h9b000000;				
 		i2c_start <= 1;		 
 		end					
-//	else if(CPLD_I2C_DLY500ms >= CYCLE_500MS_TIME+4000 && CPLD_I2C_DLY500ms <= CYCLE_500MS_TIME+4100) begin		
-//		temp_config_data <= {cpu_fan_speed_rpm[7:0],24'h000000};			
-//		CPLD_SYS_LED0 <= 1;		
-//		i2c_start <= 1;		
-//		end				
+			
 	else begin			
 		i2c_start <= 0;		
 		end
@@ -411,57 +408,57 @@ end
 parameter [7:0] DEBUG_FAN_DUTY = 100;
 parameter [7:0] TEMP_MIN = 46;
 parameter [7:0] TEMP_MAX = 70;
-reg [7:0] SPEED_TABLE[24:0];
-reg [7:0] Fan_duty;
+reg [15:0] SPEED_TABLE[24:0];
+reg [9:0] Fan_duty;
 reg [7:0] CPLD_TEMP_CPU;
 reg [7:0] CPLD_SPEED_CPU_TARGET;
 
-always @(posedge clk0 or negedge rstn) begin			
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin			
 	if(~rstn) begin 
 		Fan_duty = 100;	
-		SPEED_TABLE[0] = 16;		
-		SPEED_TABLE[1] = 18;			
-		SPEED_TABLE[2] = 20;		
-		SPEED_TABLE[3] = 22;		
-		SPEED_TABLE[4] = 24;			
-		SPEED_TABLE[5] = 26;		
-		SPEED_TABLE[7] = 28;		
-		SPEED_TABLE[8] = 30;			
-		SPEED_TABLE[9] = 32;		
-		SPEED_TABLE[10] = 34;		
-		SPEED_TABLE[11] = 36;			
-		SPEED_TABLE[12] = 40;			
-		SPEED_TABLE[13] = 40;		
-		SPEED_TABLE[14] = 42;			
-		SPEED_TABLE[15] = 44;		
-		SPEED_TABLE[16] = 46;		
-		SPEED_TABLE[17] = 48;			
-		SPEED_TABLE[18] = 50;		
-		SPEED_TABLE[19] = 52;		
-		SPEED_TABLE[20] = 54;			
-		SPEED_TABLE[21] = 56;		
-		SPEED_TABLE[22] = 58;		
-		SPEED_TABLE[23] = 60;			
-		SPEED_TABLE[24] = 66;									
+		SPEED_TABLE[0] = 960;		
+		SPEED_TABLE[1] = 1080;			
+		SPEED_TABLE[2] = 1200;		
+		SPEED_TABLE[3] = 1320;		
+		SPEED_TABLE[4] = 1440;			
+		SPEED_TABLE[5] = 1560;		
+		SPEED_TABLE[7] = 1680;		
+		SPEED_TABLE[8] = 1800;			
+		SPEED_TABLE[9] = 1920;		
+		SPEED_TABLE[10] = 2040;		
+		SPEED_TABLE[11] = 2160;			
+		SPEED_TABLE[12] = 2400;			
+		SPEED_TABLE[13] = 2400;		
+		SPEED_TABLE[14] = 2520;			
+		SPEED_TABLE[15] = 2640;		
+		SPEED_TABLE[16] = 2760;		
+		SPEED_TABLE[17] = 2880;			
+		SPEED_TABLE[18] = 3000;		
+		SPEED_TABLE[19] = 3120;		
+		SPEED_TABLE[20] = 3240;			
+		SPEED_TABLE[21] = 3360;		
+		SPEED_TABLE[22] = 3480;		
+		SPEED_TABLE[23] = 3600;			
+		SPEED_TABLE[24] = 4500;									
 		end			
 	else if(CPLD_I2C_DLY500ms == CYCLE_500MS_TIME+4000) begin		
 		CPLD_TEMP_CPU <= i2c_rd_data;		
 		if(i2c_rd_data >=TEMP_MAX)		
-			 CPLD_SPEED_CPU_TARGET <= 66;		
+			 CPLD_SPEED_CPU_TARGET <= 4500;		
 		else if(i2c_rd_data <=TEMP_MIN)		
-			 CPLD_SPEED_CPU_TARGET <= 16;		
+			 CPLD_SPEED_CPU_TARGET <= 960;		
 		else 	
 			 CPLD_SPEED_CPU_TARGET <= SPEED_TABLE[i2c_rd_data - 46];		 
 		end				 
 			
 	else if(CPLD_I2C_DLY500ms == CYCLE_500MS_TIME+4001) begin		
-		if(CPLD_SPEED_CPU_TARGET < cpu_fan_speed_rpm)begin		
-			if((cpu_fan_speed_rpm - CPLD_SPEED_CPU_TARGET)>2 && Fan_duty>0)		
-				Fan_duty <= Fan_duty -1;
+		if(CPLD_SPEED_CPU_TARGET < fan_speed)begin		
+			if((fan_speed - CPLD_SPEED_CPU_TARGET)>128 && Fan_duty>=4)		
+				Fan_duty <= Fan_duty -4;
 			end	
-		else if(CPLD_SPEED_CPU_TARGET > cpu_fan_speed_rpm)begin		
-			if((CPLD_SPEED_CPU_TARGET - cpu_fan_speed_rpm)>2 && Fan_duty<255)		
-				Fan_duty <= Fan_duty +1;
+		else if(CPLD_SPEED_CPU_TARGET > fan_speed)begin		
+			if((CPLD_SPEED_CPU_TARGET - fan_speed)>128 && Fan_duty<1000)		
+				Fan_duty <= Fan_duty +4;
 			end			
 		end						
 	else begin			
@@ -473,8 +470,8 @@ end
 /*
 风扇speed读取
 */
-reg [15:0] Fan_tach0_pulse_count;
-reg [15:0] cpu_fan_speed_rpm;
+reg [7:0] Fan_tach0_pulse_count;
+reg [15:0] fan_500ms_speed;
 reg [1:0 ] edge_detect;
 
 wire 	   count_end ;
@@ -482,7 +479,7 @@ wire 	   count_start ;
 assign count_end= CPLD_I2C_DLY500ms == CYCLE_500MS_TIME? 1'b1:1'b0;
 assign count_start= CPLD_I2C_DLY500ms == 0? 1'b1:1'b0;
 
-always @(posedge clk0 or negedge rstn) begin 
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
 	if(~rstn) begin 
 		edge_detect <= 2'b11;				
 		end		
@@ -491,7 +488,7 @@ always @(posedge clk0 or negedge rstn) begin
 		end
 end			
 		
-always @(posedge clk0 or negedge rstn) begin 
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
 	if(~rstn) begin 
 		Fan_tach0_pulse_count <= 0;					
 		end
@@ -499,12 +496,66 @@ always @(posedge clk0 or negedge rstn) begin
 		Fan_tach0_pulse_count <= Fan_tach0_pulse_count+1;		
 		end			
 	else if(count_end == 1'b1)begin			
-		cpu_fan_speed_rpm <= Fan_tach0_pulse_count;		
+		fan_500ms_speed <= {2'b00,Fan_tach0_pulse_count,6'b000000};		
 		end		
 	else if(count_start == 1'b1)begin			
 		Fan_tach0_pulse_count  <= 0;		
 		end
+end			
+
+
+reg 		fan_h_count_end;
+reg [23:0] 	fan_h_count;
+reg [23:0] 	cpu_fan_h_total;
+
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
+	if(~rstn) begin 
+		fan_h_count <= 0;					
+		end
+	else if(edge_detect == 2'b01)begin			
+		fan_h_count <= 1;		
+		end			
+	else if(edge_detect == 2'b10)begin			
+		cpu_fan_h_total <= fan_h_count;			
+		end			
+	else if(fan_h_count != 0 && fan_h_count<24'hfffffe)begin			
+		fan_h_count <= fan_h_count+1;		
+		end			
+	else if(fan_h_count==24'hfffffe)begin			
+		cpu_fan_h_total <= fan_h_count;		
+		end		
 end	
+
+
+////---------------------------------------------------------------
+///*
+//风扇speed除法计算
+//*/
+//reg div_start;
+//wire finish;
+//reg [20:0] fan_div_speed;
+reg [15:0] fan_speed;
+//wire [20:0] quo;
+//speed_divider fan_div
+//  (
+//  .clk(CPLD_LPC_CLK_R),
+//  .den(29'd495000000),
+//  .num(cpu_fan_h_total),
+//  .rst(~rstn),
+//  .start(div_start),
+//  .finish(finish),
+//  .quo(quo)
+//  //rem
+//  );    
+
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin			
+	if(~rstn) begin 	
+		fan_speed <= 0;									
+		end							
+	else if(CPLD_I2C_DLY500ms == CYCLE_500MS_TIME+400) begin					
+		fan_speed <=fan_500ms_speed;	 
+		end			  
+end
 //---------------------------------------------------------------
 /*
 风扇DUTY控制 30kHz
@@ -512,13 +563,13 @@ end
 assign CPLD_FAN_PWM1 = CPLD_FAN_PWM0;	// for si test
 assign CPLD_FAN_PWM2 = CPLD_FAN_PWM0;   // for si test
 
-reg [7:0] CPLD_FAN_HIGH_DLYXms;
-always @(posedge clk0 or negedge rstn) begin 
+reg [9:0] CPLD_FAN_HIGH_DLYXms;
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
 	if(~rstn) begin 
 		CPLD_FAN_HIGH_DLYXms <= 0;	
 		CPLD_FAN_PWM0 <= 1'b0;				
 		end
-	else if(CPLD_FAN_HIGH_DLYXms >= Fan_duty && CPLD_FAN_HIGH_DLYXms < 255) begin		
+	else if(CPLD_FAN_HIGH_DLYXms >= Fan_duty && CPLD_FAN_HIGH_DLYXms < 1000) begin		
 		CPLD_FAN_PWM0 <= 1'b0;		
 		CPLD_FAN_HIGH_DLYXms <= CPLD_FAN_HIGH_DLYXms + 1;	
 		end				
@@ -526,7 +577,7 @@ always @(posedge clk0 or negedge rstn) begin
 		CPLD_FAN_PWM0 <= 1'b1;		
 		CPLD_FAN_HIGH_DLYXms <= CPLD_FAN_HIGH_DLYXms + 1;	
 		end		
-	else if(CPLD_FAN_HIGH_DLYXms == 255) begin		
+	else if(CPLD_FAN_HIGH_DLYXms == 1000) begin		
 		CPLD_FAN_PWM0 <= 1'b1;		
 		CPLD_FAN_HIGH_DLYXms <= 1;	
 		end
@@ -538,6 +589,7 @@ reg	addr_hit;
 wire [4:0]	current_state;
 wire [15:0]	lpc_addr;
 reg [7:0]	din;
+wire [7:0]	lpc_data_in;
 wire io_rden_sm;
 wire io_wren_sm;
 LPC_Peri LPC_Peri_inst(
@@ -550,7 +602,7 @@ LPC_Peri LPC_Peri_inst(
    .addr_hit(	addr_hit		),     
    .current_state(current_state ),
    .din		(	din				),
-//   output reg  [ 7:0] lpc_data_in  ,
+   .lpc_data_in(lpc_data_in		),
 //   output wire [ 3:0] lpc_data_out ,
    .lpc_addr(	lpc_addr		),
 //   output wire        lpc_en       ,
@@ -558,38 +610,36 @@ LPC_Peri LPC_Peri_inst(
 	.io_wren_sm(	io_wren_sm		)
 );
 
+wire [7:0]	fan_speed_ht;
+wire [7:0]	fan_speed_h;
+wire [7:0]	fan_speed_l;
+assign	fan_speed_ht = (cpu_fan_h_total<100000)?fan_speed_ht:cpu_fan_h_total[23:16];
+assign	fan_speed_h  = (cpu_fan_h_total<100000)?fan_speed_h:cpu_fan_h_total[15:8];
+assign	fan_speed_l  = (cpu_fan_h_total<100000)?fan_speed_l:cpu_fan_h_total[7:0];
 always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
 	if(~rstn) begin 
 		addr_hit <= 1'b0;		
 		din <= 1'b0;			
-		end				
-	else if(lpc_addr == 16'h002e) begin		
+		end						
+	else if(lpc_addr == 16'h0069) begin		
 		addr_hit <= 1'b1;	
-		din <= 8'h27;				
+		din <= fan_speed_l;			
+		end	
+	else if(lpc_addr == 16'h006A) begin		
+		addr_hit <= 1'b1;	
+		din <= fan_speed_h;				
+		end			
+	else if(lpc_addr == 16'h006d) begin		
+		addr_hit <= 1'b1;	
+		din <= fan_speed_ht;				
 		end					
-	else if(lpc_addr == 16'h002f) begin		
+	else if(lpc_addr == 16'h006B) begin		
 		addr_hit <= 1'b1;	
-		din <= 8'haa;			
-		end				
-	else if(lpc_addr == 16'h0064) begin		
-		addr_hit <= 1'b1;	
-		din <= 8'h55;			
-		end		
-	else if(lpc_addr == 16'h0060) begin		
-		addr_hit <= 1'b1;	
-		din <= 8'hff;			
-		end		
-	else if(lpc_addr == 16'h0062) begin		
-		addr_hit <= 1'b1;	
-		din <= 8'h00;			
-		end		
-	else if(lpc_addr == 16'h0066) begin		
-		addr_hit <= 1'b1;	
-		din <= 8'hcc;			
-		end		
+		din <= CPLD_TEMP_CPU;			
+		end			
 	else  begin		
 		addr_hit <= 1'b0;	
-		din <= 8'hcc;			
+		din <= 8'h00;			
 		end
 end	
 

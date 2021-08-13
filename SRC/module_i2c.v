@@ -42,9 +42,9 @@ parameter       I2C_RD_DATA     =   'd13;
 parameter       I2C_RD_NPACK    =   'd14;
 parameter       I2C_RD_STOP     =   'd15;
 //i2c_sclk freq
-parameter       I2C_FREQ      =   80;    //7.8125Mhz/200Khz/2 = 20
+parameter       I2C_FREQ      =   320;    //7.8125Mhz/200Khz/2 = 20
 parameter       TRANSFER      =   1;
-parameter       CAPTURE       =   40;
+parameter       CAPTURE       =   160;
 parameter       STOP	      =   15;
 parameter       SEND_BIT        =   8;
 
