@@ -29,7 +29,7 @@ module TOP(
 //LED1| H  | H  | L  | L  | L  |
 	output	reg	CPLD_SYS_LED0,//74
     output	reg CPLD_SYS_LED1,//75	
-//	output	CPLD_BUZZER,//82  
+	output	reg CPLD_BUZZER,//82  
 ////===================F panel==========================	
 //	input	CPLD_F_PANEL_PWRBTN,//29
 //	input	CPLD_HW_RSTN,//85	
@@ -116,6 +116,7 @@ module TOP(
 //============ OSC 25M =======================
     input	wire	CPLD_CLK_25M//62
 );    
+
 
 //		Clock name	| Frequency 	| Phase shift
 //		C0        	| 8.250000  MHZ	| 0  DEG     
@@ -588,7 +589,7 @@ end
 reg	addr_hit;
 wire [4:0]	current_state;
 wire [15:0]	lpc_addr;
-reg [7:0]	din;
+reg	 [7:0]	din;
 wire [7:0]	lpc_data_in;
 wire io_rden_sm;
 wire io_wren_sm;
@@ -608,7 +609,9 @@ LPC_Peri LPC_Peri_inst(
 //   output wire        lpc_en       ,
 	.io_rden_sm(	io_rden_sm		),
 	.io_wren_sm(	io_wren_sm		)
-);
+);	
+
+   
 
 wire [7:0]	fan_speed_ht;
 wire [7:0]	fan_speed_h;
@@ -616,52 +619,102 @@ wire [7:0]	fan_speed_l;
 assign	fan_speed_ht = (cpu_fan_h_total<100000)?fan_speed_ht:cpu_fan_h_total[23:16];
 assign	fan_speed_h  = (cpu_fan_h_total<100000)?fan_speed_h:cpu_fan_h_total[15:8];
 assign	fan_speed_l  = (cpu_fan_h_total<100000)?fan_speed_l:cpu_fan_h_total[7:0];
+
+reg [3:0] curr_state;
+reg [3:0] next_state;
+
+reg [7:0] lpc_data_reg;
+
+parameter       cmd_idle      =   'd0;
+parameter       cmd_66        =   'd1;
+parameter       cmd_80        =   'd2;
+parameter       cmd_62addr    =   'd3;
+parameter       cmd_62read    =   'd4;
+
 always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
 	if(~rstn) begin 
-		addr_hit <= 1'b0;		
-		din <= 1'b0;			
-		end						
-	else if(lpc_addr == 16'h0069) begin		
-		addr_hit <= 1'b1;	
-		din <= fan_speed_l;			
-		end	
-	else if(lpc_addr == 16'h006A) begin		
-		addr_hit <= 1'b1;	
-		din <= fan_speed_h;				
+		addr_hit <= 1'b0;					
 		end			
-	else if(lpc_addr == 16'h006d) begin		
+	else if(lpc_addr == 16'h0062) 	
+		addr_hit <= 1'b1;		
+	else if( lpc_addr == 16'h0066)		
 		addr_hit <= 1'b1;	
-		din <= fan_speed_ht;				
-		end					
-	else if(lpc_addr == 16'h006B) begin		
-		addr_hit <= 1'b1;	
-		din <= CPLD_TEMP_CPU;			
+	else if(current_state == 5'h01)	
+		addr_hit <= 1'b0;					
+end		
+
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
+	if(~rstn) begin 
+		curr_state <= cmd_idle;					
 		end			
-	else  begin		
-		addr_hit <= 1'b0;	
-		din <= 8'h00;			
-		end
-end	
+	else		
+		curr_state <= next_state;		
+end
+always @(*) begin 
+	next_state = cmd_idle;
+    case(curr_state)
+    cmd_idle:	
+		if(lpc_addr == 16'h0066)	
+			next_state = cmd_66;							
+		else			
+			next_state = cmd_idle;			
+	cmd_66:	
+		if(lpc_data_in==8'h80)	
+			next_state = cmd_80;					
+		else			
+			next_state = cmd_66;			
+	cmd_80:	
+		if(lpc_addr == 16'h0062)	
+			next_state = cmd_62addr;					
+		else			
+			next_state = cmd_80;			
+	cmd_62addr:	
+		if(lpc_data_in==8'hf2 || lpc_data_in==8'hf3 || lpc_data_in==8'hf4|| lpc_data_in==8'hf0)	begin
+			next_state = cmd_62read;			
+			lpc_data_reg = 	lpc_data_in;	
+			end				
+		else			
+			next_state = cmd_62addr;		
+	cmd_62read:	
+		if(lpc_addr != 16'h0062)			
+			next_state = cmd_idle;		
+		else 		
+			next_state = cmd_62read;			
+	default:next_state = cmd_idle;
+    endcase							
+end							
 
-////---------------------------------------------------------------
-///*
-//风扇pwm test
-//*/
-//reg [23:0] CPLD_FAN_HIGH_DLY2000ms;
-//always @(posedge clk0 or negedge rstn) begin 
-//	if(~rstn) begin 
-//		CPLD_FAN_HIGH_DLY2000ms <= 0;			
-//		end			
-//	else if(CPLD_FAN_HIGH_DLY2000ms == 15625000-1) begin		
-//		Fan_duty <= Fan_duty + 1;	
-//		CPLD_FAN_HIGH_DLY2000ms <= 0;
-//		end		
-//	else begin		
-//		CPLD_FAN_HIGH_DLY2000ms <= CPLD_FAN_HIGH_DLY2000ms+1;
-//		end
-//end	
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
+	if(~rstn) begin 
+		din <= 8'hff;					
+		end			
+	else if(curr_state == cmd_62addr && lpc_data_reg==8'hf2)		
+		din <= fan_speed_l;	
+	else if(curr_state == cmd_62addr && lpc_data_reg==8'hf3)		
+		din <=fan_speed_h;	
+	else if(curr_state == cmd_62addr && lpc_data_reg==8'hf4)		
+		din <= fan_speed_ht;	
+	else if(curr_state == cmd_62addr && lpc_data_reg==8'hf0)		
+		din <= CPLD_TEMP_CPU;		
+end
 
+//---------------------------------------------------------------
+/*
+buzzer test
+*/
 
-
+reg [15:0] buzzer_count;
+always @(posedge CPLD_LPC_CLK_R or negedge rstn) begin 
+	if(~rstn) begin 
+		buzzer_count <= 0;
+		CPLD_BUZZER <= 0;					
+		end			
+	else if(buzzer_count == 16666)begin		
+		CPLD_BUZZER <= ~CPLD_BUZZER;	
+		buzzer_count <= 0;		
+		end			
+	else		
+		buzzer_count <= buzzer_count+1;
+end
 
 endmodule

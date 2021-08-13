@@ -117,7 +117,9 @@ module LPC_Peri (
    `define IO_RD_WAIT_LCLK1   5'h17  
    `define IO_RD_WAIT_LCLK2   5'h1A       
    `define IO_WR_WAIT_LCLK1   5'h1B  
-   `define IO_WR_WAIT_LCLK2   5'h1C  
+   `define IO_WR_WAIT_LCLK2   5'h1C        
+   `define IO_WR_WAIT_LCLK3   5'h1D  
+   `define IO_WR_WAIT_LCLK4   5'h1E 
 // --------------------------------------------------------------------------
 // FSM -- state machine supporting LPC I/O read & I/O write only
 // --------------------------------------------------------------------------
@@ -152,10 +154,12 @@ assign next_state = (lreset_n == 1'b0) ? `IDLE :
                     (current_state == `IO_WR_ADDR_LCLK4) ? `IO_WR_DATA_LCLK1 :
                     (current_state == `IO_WR_DATA_LCLK1) ? `IO_WR_DATA_LCLK2 :
                     (current_state == `IO_WR_DATA_LCLK2) ? `IO_WR_TAR_LCLK1  :
-                    (current_state == `IO_WR_TAR_LCLK1 ) ? `IO_WR_WAIT_LCLK1  :                    
-					(current_state == `IO_WR_WAIT_LCLK1 ) ? `IO_WR_WAIT_LCLK2  :
-                    ((current_state == `IO_WR_WAIT_LCLK2 ) && (addr_hit == 1'b0))? `IDLE       :
-                    ((current_state == `IO_WR_WAIT_LCLK2 ) && (addr_hit == 1'b1))? `IO_WR_SYNC :
+                    (current_state == `IO_WR_TAR_LCLK1 ) ? `IO_WR_WAIT_LCLK1  :                        
+					(current_state == `IO_WR_WAIT_LCLK1 ) ? `IO_WR_WAIT_LCLK2  :                    
+					(current_state == `IO_WR_WAIT_LCLK2 ) ? `IO_WR_WAIT_LCLK3  :                
+					(current_state == `IO_WR_WAIT_LCLK3 ) ? `IO_WR_WAIT_LCLK4  :
+                    ((current_state == `IO_WR_WAIT_LCLK4 ) && (addr_hit == 1'b0))? `IDLE       :
+                    ((current_state == `IO_WR_WAIT_LCLK4 ) && (addr_hit == 1'b1))? `IO_WR_SYNC :
                     (current_state == `IO_WR_SYNC      ) ? `LAST_TAR_LCLK1   :
                     (current_state == `LAST_TAR_LCLK1  ) ? `LAST_TAR_LCLK2   :
                     `IDLE;
